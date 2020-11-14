@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Verbatim Text in Latex
+# uuid: varbatim-text-in-latex
+# key: ttt
+# condition: t
+# --
+\texttt{$0}

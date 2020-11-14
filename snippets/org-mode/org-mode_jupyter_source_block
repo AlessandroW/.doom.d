@@ -1,0 +1,7 @@
+# key: <sp
+# name: Org mode jupyter-python source block.
+# uuid: org-mode jupyter-python source block
+# --
+#+BEGIN_SRC jupyter-python :session session :results raw drawer
+$0
+#+END_SRC

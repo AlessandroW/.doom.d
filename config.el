@@ -378,37 +378,6 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         ":NOTER_DOCUMENT: ${file}\n"
         ":END:\n\n"
         ))
-;; (setq bibtex-completion-notes-path org-directory
-;;       bibtex-completion-bibliography zot_bib
-;;       bibtex-completion-pdf-field "file"
-;;       bibtex-completion-notes-template-multiple-files
-;;       (concat
-;;        "#+TITLE: ${title}\n"
-;;        "#+ROAM_KEY: cite:${=key=}\n"
-;;        "* TODO Notes\n"
-;;        ":PROPERTIES:\n"
-;;        ":Custom_ID: ${=key=}\n"
-;;        ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
-;;        ":AUTHOR: ${author-abbrev}\n"
-;;        ":JOURNAL: ${journaltitle}\n"
-;;        ":DATE: ${date}\n"
-;;        ":YEAR: ${year}\n"
-;;        ":DOI: ${doi}\n"
-;;        ":URL: ${url}\n"
-;;        ":END:\n\n"
-;; ))
-
-;; (use-package! org-ref
-;;     :config
-;;     (setq
-;;          org-ref-completion-library 'org-ref-ivy-cite
-;;          org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
-;;          org-reftex-default-bibliography zot_bib
-;;          org-ref-bibliography-notes (concat org-directory "/bibnotes.org")
-;;          org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-;;          org-ref-notes-directory org-directory
-;;          org-ref-notes-function 'orb-edit-notes
-;;     ))
 
 
 ;; Org-Roam-Sever

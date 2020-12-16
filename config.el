@@ -59,7 +59,7 @@
 ;; ORG MODE
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/Dropbox/org/")
+(setq org-directory "~/org/")
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 
 ;; The built-in calendar mode mappings for org-journal
@@ -106,10 +106,10 @@ Version 2017-06-02"
                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
   ;; From https://lepisma.xyz/2017/10/28/ricing-org-mode/
   (setq header-line-format " ")
-  (setq org-agenda-files
-        (append (file-expand-wildcards "~/Dropbox/org/*/*.org")
-                (file-expand-wildcards "~/Dropbox/org/*.org")
-                ))
+  ;; (setq org-agenda-files
+  ;;       (append (file-expand-wildcards "~/org/schedule/*.org")
+  ;;               (file-expand-wildcards "~/org/projects/*.org")
+  ;;               (file-expand-wildcards "~/org/*.org")))
   (setq org-tags-column 0)
   (setq org-superstar-headline-bullets-list '("⠀󠀠"));;("▕󠀠󠀠"󠀠"●" "○"))
   (setq org-ellipsis "…")
@@ -368,17 +368,17 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 (setq org-roam-capture-templates
 '(("d" "default" plain
         (function org-roam-capture--get-point)
-        "%?\n* Backlinks\n* References"
+        "%?\n* References"
         :file-name "%<%Y%m%d%H%M%S>-${slug}"
-        :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/Dropbox/org/org-roam/hugo_setup.org\n#+roam_alias:\n#+roam_tags:\n\n"
+        :head "#+TITLE: \"\"${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+roam_alias:\n#+roam_tags:\n\n"
         :unnarrowed t)
         ))
 
 (setq org-roam-capture-ref-templates
 '(("r" "ref" plain (function org-roam-capture--get-point)
-        "%?\n* Backlinks\n* References\n- [[${ref}][Source]]"
+        "%?\n* References\n- [[${ref}][Source]]"
         :file-name "web/${slug}"
-        :head "#+TITLE: ${title}\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/Dropbox/org/org-roam/hugo_setup.org\n#+roam_key: ${ref}\n#+roam_alias:\n#+roam_tags:\n\n"
+        :head "#+TITLE: \"\"\n#+ROAM_ALIAS: \"${title}\"\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+roam_key: ${ref}\n#+roam_tags:\n\n"
         :unnarrowed t)
         ("t" "ref" plain (function org-roam-capture--get-point)
         "%?"
@@ -388,7 +388,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 
 ;; ORG ROAM
 (add-hook 'after-init-hook 'org-roam-mode)
-(setq org-roam-directory "~/Dropbox/org/org-roam")
+(setq org-roam-directory "~/org/org-roam")
 
 ;; ORG with Zotero
 ;; based on https://rgoswami.me/posts/org-note-workflow/#zotero
@@ -399,18 +399,21 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 ;;       deft-directory org-directory)
 
 ;; Helm-Bibtex
-(setq reftex-default-bibliography '("~/Dokumente/References/my_zotero_library.bib")
+;; Open PDF in Evince not Firefox
+(setq helm-external-programs-associations '(("pdf" . (if (eq system-type 'gnu/linux) "open" "evince"))))
+;; Helm-Bibtex config
+(setq reftex-default-bibliography '("~/Dokumente/References/Public/my_zotero_library.bib")
       org-ref-completion-library 'org-ref-ivy-cite
       org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
-      org-ref-default-bibliography '("~/Dokumente/References/my_zotero_library.bib")
+      org-ref-default-bibliography '("~/Dokumente/References/Public/my_zotero_library.bib")
       org-ref-notes-function
       (lambda (thekey)
 	(let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
 	  (bibtex-completion-edit-notes
 	   (list (car (org-ref-get-bibtex-key-and-file thekey))))))
-      bibtex-completion-bibliography '("~/Dokumente/References/my_zotero_library.bib")
+      bibtex-completion-bibliography '("~/Dokumente/References/Public/my_zotero_library.bib")
       bibtex-completion-pdf-field "file"  ; For Zotero, see .bib file
-      bibtex-completion-notes-path "~/Dropbox/org/org-roam/" ; One org-file for per publications
+      bibtex-completion-notes-path "~/org/org-roam/" ; One org-file for per publications
       bibtex-completion-notes-template-multiple-files
       (concat
         "${title}\n"

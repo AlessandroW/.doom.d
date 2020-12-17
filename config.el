@@ -99,17 +99,21 @@ Version 2017-06-02"
   fill-column 100
   )
 
+
+(setq org-agenda-files
+        (append (file-expand-wildcards "~/org/schedule/*.org")
+                (file-expand-wildcards "~/org/projects/*.org")
+                (file-expand-wildcards "~/org/*.org")))
+
 (after! org
+  ;; BEtter Bullets
   ;; From http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html
   (font-lock-add-keywords 'org-mode
                         '(("^ *\\([-]\\) "
                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
   ;; From https://lepisma.xyz/2017/10/28/ricing-org-mode/
   (setq header-line-format " ")
-  ;; (setq org-agenda-files
-  ;;       (append (file-expand-wildcards "~/org/schedule/*.org")
-  ;;               (file-expand-wildcards "~/org/projects/*.org")
-  ;;               (file-expand-wildcards "~/org/*.org")))
+
   (setq org-tags-column 0)
   (setq org-superstar-headline-bullets-list '("⠀󠀠"));;("▕󠀠󠀠"󠀠"●" "○"))
   (setq org-ellipsis "…")

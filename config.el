@@ -99,17 +99,20 @@ Version 2017-06-02"
   fill-column 100
   )
 
+
+(setq org-agenda-files
+        (append (file-expand-wildcards "~/org/schedule/*.org")
+                (file-expand-wildcards "~/org/projects/*.org")
+                (file-expand-wildcards "~/org/*.org")))
+
 (after! org
+  ;; BEtter Bullets
   ;; From http://www.howardism.org/Technical/Emacs/orgmode-wordprocessor.html
   (font-lock-add-keywords 'org-mode
                         '(("^ *\\([-]\\) "
                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
   ;; From https://lepisma.xyz/2017/10/28/ricing-org-mode/
   (setq header-line-format " ")
-  (setq org-agenda-files
-        (append (file-expand-wildcards "~/org/*/*.org")
-                (file-expand-wildcards "~/org/*.org")
-                ))
   (setq org-tags-column 0)
   (setq org-superstar-headline-bullets-list '("⠀󠀠"));;("▕󠀠󠀠"󠀠"●" "○"))
   (setq org-ellipsis "…")
@@ -276,62 +279,18 @@ respectively."
   "Default target for todo entries.
 Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 `org-capture-templates'.")
-;; FIXME! NEXT state for org mode.
-;; (use-package! org
-;;   :config
-;;   (org-add-to-list 'org-modules "org-habit"))
-;;------ TODO Keywords
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "REFERENCE(r)" "SOMEDAY(s)" "NEXT(n)" "INPROGRESS(i)" "PROJ(p)" "|" "DONE(d)")))
-;; (setq-hook! org-mode org-todo-keywords
-;;         '((sequence
-;;            "TODO(t)"  ; A task that needs doing & is ready to do
-;;            "NEXT(n)"  ; The next immediate action
-;;            "PROJ(p)"  ; A project, which usually contains other tasks
-;;            "STRT(s)"  ; A task that is in progress
-;;            "WAIT(w)"  ; Something external is holding up this task
-;;            "HOLD(h)"  ; This task is paused/on hold because of me
-;;            "|"
-;;            "DONE(d)"  ; Task successfully completed
-;;            "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
-;;           (sequence
-;;            "[ ](T)"   ; A task that needs doing
-;;            "[-](S)"   ; Task is in progress
-;;            "[?](W)"   ; Task is being held up or paused
-;;            "|"
-;;            "[X](D)")) ; Task was completed
-;;         org-todo-keyword-faces
-;;         '(("[-]"  . +org-todo-active)
-;;           ("STRT" . +org-todo-active)
-;;           ("[?]"  . +org-todo-onhold)
-;;           ("WAIT" . +org-todo-onhold)
-;;           ("HOLD" . +org-todo-onhold)
-;;           ("PROJ" . +org-todo-project)))
-;; (defvar +org-habit-min-width 3
-;;   "Hides the consistency graph if the `org-habit-graph-column' is less than this value")
-;;
 
-(use-package! hl-todo
-  :config
-  (setq hl-todo-keyword-faces
-        `(;; For things that need to be done, just not today.
-          ("TODO" warning bold)
-          ;; For the next immediate action in a project.
-          ("NEXT" warning bold)
-          ;; For problems that will become bigger problems later if not
-          ;; fixed ASAP.
-          ("FIXME" error bold)
-          ;; For tidbits that are unconventional and not intended uses of the
-          ;; constituent parts, and may break in a future update.
-          ("HACK" font-lock-constant-face bold)
-          ;; For things that were done hastily and/or hasn't been thoroughly
-          ;; tested. It may not even be necessary!
-          ("REVIEW" font-lock-keyword-face bold)
-          ;; For especially important gotchas with a given implementation,
-          ;; directed at another user other than the author.
-          ("NOTE" success bold)
-          ;; For things that just gotta go and will soon be gone.
-          ("DEPRECATED" font-lock-doc-face bold))))
+(after! org
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "NEXT(n)" "WAIT(w)" "PROJ(p)" "STRT(s)" "|" "DONE(d)" "KILL(k)")))
+  (setq org-todo-keyword-faces
+        '(("TODO" . warning)
+          ("NEXT" . error)
+          ("STRT" . success)
+          ("WAIT" . font-lock-keyword-face)
+          ("PROJ" . org-headline-todo)
+          ))
+  )
 
 ;; OX-HUGO
 ;; FROM
@@ -368,17 +327,17 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 (setq org-roam-capture-templates
 '(("d" "default" plain
         (function org-roam-capture--get-point)
-        "%?\n* Backlinks\n* References"
+        "%?\n* References"
         :file-name "%<%Y%m%d%H%M%S>-${slug}"
-        :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+roam_alias:\n#+roam_tags:\n\n"
+        :head "#+TITLE: \"\"${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+roam_alias:\n#+roam_tags:\n\n"
         :unnarrowed t)
         ))
 
 (setq org-roam-capture-ref-templates
 '(("r" "ref" plain (function org-roam-capture--get-point)
-        "%?\n* Backlinks\n* References\n- [[${ref}][Source]]"
+        "%?\n* References\n- [[${ref}][Source]]"
         :file-name "web/${slug}"
-        :head "#+TITLE: ${title}\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+roam_key: ${ref}\n#+roam_alias:\n#+roam_tags:\n\n"
+        :head "#+TITLE: \"\"\n#+ROAM_ALIAS: \"${title}\"\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+roam_key: ${ref}\n#+roam_tags:\n\n"
         :unnarrowed t)
         ("t" "ref" plain (function org-roam-capture--get-point)
         "%?"
@@ -399,16 +358,19 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 ;;       deft-directory org-directory)
 
 ;; Helm-Bibtex
-(setq reftex-default-bibliography '("~/Dokumente/References/my_zotero_library.bib")
+;; Open PDF in Evince not Firefox
+(setq helm-external-programs-associations '(("pdf" . (if (eq system-type 'gnu/linux) "open" "evince"))))
+;; Helm-Bibtex config
+(setq reftex-default-bibliography '("~/Dokumente/References/Public/my_zotero_library.bib")
       org-ref-completion-library 'org-ref-ivy-cite
       org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
-      org-ref-default-bibliography '("~/Dokumente/References/my_zotero_library.bib")
+      org-ref-default-bibliography '("~/Dokumente/References/Public/my_zotero_library.bib")
       org-ref-notes-function
       (lambda (thekey)
 	(let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
 	  (bibtex-completion-edit-notes
 	   (list (car (org-ref-get-bibtex-key-and-file thekey))))))
-      bibtex-completion-bibliography '("~/Dokumente/References/my_zotero_library.bib")
+      bibtex-completion-bibliography '("~/Dokumente/References/Public/my_zotero_library.bib")
       bibtex-completion-pdf-field "file"  ; For Zotero, see .bib file
       bibtex-completion-notes-path "~/org/org-roam/" ; One org-file for per publications
       bibtex-completion-notes-template-multiple-files
@@ -419,38 +381,20 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         ":NOTER_DOCUMENT: ${file}\n"
         ":END:\n\n"
         ))
-;; (setq bibtex-completion-notes-path org-directory
-;;       bibtex-completion-bibliography zot_bib
-;;       bibtex-completion-pdf-field "file"
-;;       bibtex-completion-notes-template-multiple-files
-;;       (concat
-;;        "#+TITLE: ${title}\n"
-;;        "#+ROAM_KEY: cite:${=key=}\n"
-;;        "* TODO Notes\n"
-;;        ":PROPERTIES:\n"
-;;        ":Custom_ID: ${=key=}\n"
-;;        ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
-;;        ":AUTHOR: ${author-abbrev}\n"
-;;        ":JOURNAL: ${journaltitle}\n"
-;;        ":DATE: ${date}\n"
-;;        ":YEAR: ${year}\n"
-;;        ":DOI: ${doi}\n"
-;;        ":URL: ${url}\n"
-;;        ":END:\n\n"
-;; ))
 
-;; (use-package! org-ref
-;;     :config
-;;     (setq
-;;          org-ref-completion-library 'org-ref-ivy-cite
-;;          org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
-;;          org-reftex-default-bibliography zot_bib
-;;          org-ref-bibliography-notes (concat org-directory "/bibnotes.org")
-;;          org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-;;          org-ref-notes-directory org-directory
-;;          org-ref-notes-function 'orb-edit-notes
-;;     ))
 
+;; Org-Roam-Sever
+(setq org-roam-server-host "127.0.0.1"
+        org-roam-server-port 9090
+        org-roam-server-authenticate nil
+        org-roam-server-export-inline-images t
+        org-roam-server-serve-files nil
+        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+        org-roam-server-network-poll t
+        org-roam-server-network-arrows nil
+        org-roam-server-network-label-truncate t
+        org-roam-server-network-label-truncate-length 60
+        org-roam-server-network-label-wrap-length 20)
 
 ;; EMACS APPLICATION FRAMEWORK
 ;; https://github.com/manateelazycat/emacs-application-framework#install

@@ -51,3 +51,4 @@
 (package! org-super-agenda)
 (package! zotxt)
 (package! org-ref)
+(package! org-roam-server)

@@ -59,7 +59,7 @@
 ;; ORG MODE
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/Dropbox/org/")
+(setq org-directory "~/org/")
 (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
 
 ;; The built-in calendar mode mappings for org-journal
@@ -107,8 +107,8 @@ Version 2017-06-02"
   ;; From https://lepisma.xyz/2017/10/28/ricing-org-mode/
   (setq header-line-format " ")
   (setq org-agenda-files
-        (append (file-expand-wildcards "~/Dropbox/org/*/*.org")
-                (file-expand-wildcards "~/Dropbox/org/*.org")
+        (append (file-expand-wildcards "~/org/*/*.org")
+                (file-expand-wildcards "~/org/*.org")
                 ))
   (setq org-tags-column 0)
   (setq org-superstar-headline-bullets-list '("⠀󠀠"));;("▕󠀠󠀠"󠀠"●" "○"))
@@ -370,7 +370,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         (function org-roam-capture--get-point)
         "%?\n* Backlinks\n* References"
         :file-name "%<%Y%m%d%H%M%S>-${slug}"
-        :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/Dropbox/org/org-roam/hugo_setup.org\n#+roam_alias:\n#+roam_tags:\n\n"
+        :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+roam_alias:\n#+roam_tags:\n\n"
         :unnarrowed t)
         ))
 
@@ -378,7 +378,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 '(("r" "ref" plain (function org-roam-capture--get-point)
         "%?\n* Backlinks\n* References\n- [[${ref}][Source]]"
         :file-name "web/${slug}"
-        :head "#+TITLE: ${title}\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/Dropbox/org/org-roam/hugo_setup.org\n#+roam_key: ${ref}\n#+roam_alias:\n#+roam_tags:\n\n"
+        :head "#+TITLE: ${title}\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+roam_key: ${ref}\n#+roam_alias:\n#+roam_tags:\n\n"
         :unnarrowed t)
         ("t" "ref" plain (function org-roam-capture--get-point)
         "%?"
@@ -388,7 +388,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 
 ;; ORG ROAM
 (add-hook 'after-init-hook 'org-roam-mode)
-(setq org-roam-directory "~/Dropbox/org/org-roam")
+(setq org-roam-directory "~/org/org-roam")
 
 ;; ORG with Zotero
 ;; based on https://rgoswami.me/posts/org-note-workflow/#zotero
@@ -410,7 +410,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 	   (list (car (org-ref-get-bibtex-key-and-file thekey))))))
       bibtex-completion-bibliography '("~/Dokumente/References/my_zotero_library.bib")
       bibtex-completion-pdf-field "file"  ; For Zotero, see .bib file
-      bibtex-completion-notes-path "~/Dropbox/org/org-roam/" ; One org-file for per publications
+      bibtex-completion-notes-path "~/org/org-roam/" ; One org-file for per publications
       bibtex-completion-notes-template-multiple-files
       (concat
         "${title}\n"

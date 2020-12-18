@@ -212,6 +212,7 @@ Version 2017-06-02"
 
 (map! (:when (featurep! :ui window-select)
       "C-ö" #'other-window
+      "C-;" #'other-window
       ))
 
 

@@ -330,7 +330,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         (function org-roam-capture--get-point)
         "%?\n* References"
         :file-name "%<%Y%m%d%H%M%S>-${slug}"
-        :head "#+TITLE: \"\"${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+roam_alias:\n#+roam_tags:\n\n"
+        :head "#+TITLE: \"${title}\"\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+roam_alias:\n#+roam_tags:\n\n"
         :unnarrowed t)
         ))
 

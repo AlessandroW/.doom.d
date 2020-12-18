@@ -97,7 +97,6 @@
        ;;gist              ; interacting with github gists
        lookup              ; navigate your code and its documentation
        lsp
-       macos             ; MacOS-specific commands
        magit             ; a git porcelain for Emacs
        ;;make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
@@ -109,7 +108,8 @@
        ;;upload            ; map local to remote projects via ssh/ftp
 
        :os
-       arch
+       macos
+
 
        :lang
        ;;agda              ; types of types of types of types...

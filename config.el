@@ -306,18 +306,19 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
   (defun alessandrow-duplicate-roam-tags-as-hugo-tags ()
     "Duplicate the roam_tags as hugo_tags to export them with ox-hugo."
     (let ((current-point (point)))
-      (goto-char (point-min))
-      (if (re-search-forward "^#\\+hugo_tags.+$" nil t)
-        (goto-char point)
-      (let ((roam_tag (re-search-forward "^#\\+roam_tags.+$" nil t)))
-        (if roam_tag
-            (progn (goto-char roam_tag)
-                   (alessandrow-duplicate-current-line )
-                   (re-search-backward "^#\\+roam_tags:" nil t)
-                   (replace-match "#+hugo_tags:")
-                   (goto-char current-point)
-                   (forward-line 2))
-          (message "Regex did not match"))))))
+      (save-excursion
+        (goto-char (point-min))
+        (if (re-search-forward "^#\\+hugo_tags.+$" nil t)
+            (goto-char point)
+          (let ((roam_tag (re-search-forward "^#\\+roam_tags.+$" nil t)))
+            (if roam_tag
+                (progn (goto-char roam_tag)
+                       (alessandrow-duplicate-current-line )
+                       (re-search-backward "^#\\+roam_tags:" nil t)
+                       (replace-match "#+hugo_tags:")
+                       (goto-char current-point)
+                       (forward-line 2))
+              (message "Regex did not match")))))))
 
   (defun alessandrow-org-roam-mode-before-save-hook()
     "Before-save-hook for org-roam to add hugo_tags if roam_tags exist."

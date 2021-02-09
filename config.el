@@ -23,6 +23,8 @@
 
 ;; CUSTOM KEYBINDINGS
 (map! "C-x C-b" 'ivy-switch-buffer ) ;; Don't open the buffer menu when pressing Ctrl for too long.
+(map! "<mouse-8>" 'previous-buffer ) ;; Don't open the buffer menu when pressing Ctrl for too long.
+(map! "<mouse-9>" 'next-buffer ) ;; Don't open the buffer menu when pressing Ctrl for too long.
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:

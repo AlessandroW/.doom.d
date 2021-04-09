@@ -43,6 +43,7 @@
 
 
 (load! "config/org.el")
+(load! "config/ui.el")
 
 (map! "C-x C-b" 'ivy-switch-buffer ) ;; Don't open the buffer menu when pressing Ctrl for too long.
 (map! "C-ö" #'other-window

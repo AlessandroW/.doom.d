@@ -9,11 +9,11 @@
 (setq user-full-name "Alessandro Wollek"
       user-mail-address "a@wollek.dev"
 
-      ;; So opt for manual completion:
-      ;; https://www.monolune.com/configuring-company-mode-in-emacs/
-      company-idle-delay 0
-      company-minimum-prefix-length 2
-      company-selection-wrap-around t
+      ;; ;; So opt for manual completion:
+      ;; ;; https://www.monolune.com/configuring-company-mode-in-emacs/
+      ;; ;; company-idle-delay 0
+      ;; ;; company-minimum-prefix-length 2
+      ;; company-selection-wrap-around t
 
       ;; lsp-ui-sideline is redundant with eldoc and much more invasive, so
       ;; disable it by default.
@@ -133,37 +133,9 @@ Version 2017-06-02"
 (use-package! org-super-agenda
   :after org-agenda
   :init
-  (setq org-agenda-custom-commands
-        '(("c" "Super view"
-           ((alltodo "" ((org-agenda-overriding-header "")
-                         (org-super-agenda-groups
-                          '((:log t)
-                            (:name "Today's tasks"
-                                   :file-path "schedule/day.org")
-                            (:name "Inbox"
-                                   :file-path "./inbox.org")
-                            (:name "This Week's tasks"
-                                   :file-path "schedule/week.org")
-                            (:name "Work"
-                                   :file-path "projects/snapaddy.org")
-                            (:name "Next Week's tasks"
-                                   :file-path "schedule/next_week.org")
-                            (:name "This Months's tasks"
-                                   :file-path "schedule/this_month.org")
-                            (:name "Due Today"
-                                   :deadline today
-                                   :order 2)
-                            (:name "Projects"
-                                   :file-path "projects/")
-                            (:name "Scheduled Soon"
-                                   :scheduled future
-                                   :order 8)
-                            (:name "Overdue"
-                                   :deadline past
-                                   :order 7)
-                            (:name "Meetings"
-                                   :and (:todo "MEET" :scheduled future)
-                                   :order 10)))))))))
+  (setq org-super-agenda-groups
+        '((:name "Projects"
+           :children t)))
   :config
   (org-super-agenda-mode))
 
@@ -332,7 +304,7 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
         (function org-roam-capture--get-point)
         "%?\n* References"
         :file-name "%<%Y%m%d%H%M%S>-${slug}"
-        :head "#+TITLE: \"\"${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+roam_alias:\n#+roam_tags:\n\n"
+        :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+roam_alias:\n#+roam_tags:\n\n"
         :unnarrowed t)
         ))
 
@@ -340,13 +312,18 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 '(("r" "ref" plain (function org-roam-capture--get-point)
         "%?\n* References\n- [[${ref}][Source]]"
         :file-name "web/${slug}"
-        :head "#+TITLE: \"\"\n#+ROAM_ALIAS: \"${title}\"\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+roam_key: ${ref}\n#+roam_tags:\n\n"
+        :head "#+TITLE: \n#+ROAM_ALIAS: \"${title}\"\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+roam_key: ${ref}\n#+roam_tags:\n\n"
         :unnarrowed t)
         ("t" "ref" plain (function org-roam-capture--get-point)
         "%?"
         :file-name "${ref}"
         :unnarrowed t)
         ))
+
+;; DEFT
+(setq deft-directory "~/org/org-roam"
+      deft-extensions '("org")
+      deft-recursive t)
 
 ;; ORG ROAM
 (add-hook 'after-init-hook 'org-roam-mode)
@@ -402,3 +379,67 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
 ;; EMACS APPLICATION FRAMEWORK
 ;; https://github.com/manateelazycat/emacs-application-framework#install
 ;; (use-package! eaf :load-path "~/projects/repositories/emacs-application-framework")
+
+;; ORG ROAM TF IDF
+(defun note-to-org (path title)
+  (concat " - [[" path "][" title "]]"))
+
+(defun personal/init-tf-idf ()
+  (interactive)
+  (let ((output (shell-command-to-string
+                (concat "python " "/mnt/projects/repositories/org-roam-tfidf/org_roam_tfidf/initalize.py"))))
+    (message output)))
+
+
+(defun personal/get-related-notes ()
+  (interactive)
+  (let ((path (buffer-file-name))
+        (temp-buf-name "*similar notes*")
+        python-output similar-paths similar-titles python-filenames)
+    (setq python-output (shell-command-to-string
+                         (concat "python " "/mnt/projects/repositories/org-roam-tfidf/org_roam_tfidf/recommender.py " path)))
+    (setq python-filenames (car python-output))
+    (setq similar-paths (split-string (substring python-filenames 2 -3) "', '"))
+    (setq similar-titles (mapcar #'org-roam-db--get-titles similar-paths))
+    (get-buffer-create temp-buf-name)
+    (with-current-buffer temp-buf-name
+      (unless (= (point-max) (point-min))
+        (goto-char (point-max))
+        (insert "\n\n"))
+      (insert "* Similar Notes\n")
+      (insert (string-join
+               (mapcar* #'note-to-org similar-paths similar-titles)
+               "\n"))
+      ;; (insert (cdr python-output)))
+      )
+    (switch-to-buffer-other-window temp-buf-name)
+    (org-mode)
+ ))
+
+
+;; PYTHON
+;; Built-in Python utilities
+;; From: https://gitlab.com/nathanfurnal/dotemacs/-/snippets/2060535
+;; (use-package! python
+;;   :config
+;;   ;; Use IPython when available or fall back to regular Python
+;;   (cond
+;;    ((executable-find "ipython")
+;;     (progn
+;;       (setq python-shell-buffer-name "IPython")
+;;       (setq python-shell-interpreter "ipython")
+;;       (setq python-shell-interpreter-args "-i --simple-prompt")))
+;;    ((executable-find "python3")
+;;     (setq python-shell-interpreter "python3"))
+;;    ((executable-find "python2")
+;;     (setq python-shell-interpreter "python2"))
+;;    (t
+;;     (setq python-shell-interpreter "python"))))
+
+;; C++
+(setq lsp-clients-clangd-args '("-j=3"
+                                "--background-index"
+                                "--clang-tidy"
+                                "--completion-style=detailed"
+                                "--header-insertion=never"))
+(after! lsp-clangd (set-lsp-priority! 'clangd 2))

@@ -52,3 +52,4 @@
 (package! zotxt)
 (package! org-ref)
 (package! org-roam-server)
+(package! eval-in-repl)

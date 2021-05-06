@@ -12,3 +12,6 @@
 ;; Switch to the new window after splitting
 (setq evil-split-window-below t
       evil-vsplit-window-right t)
+
+;; Use snipe for horizontal and vertical movement.
+(setq evil-snipe-scope 'whole-visible)

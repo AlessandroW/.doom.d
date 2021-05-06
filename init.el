@@ -84,6 +84,7 @@
        :tools
        ;;ansible
        ;;debugger          ; FIXME stepping through code, to help you add bugs
+       biblio
        ;;direnv
        ;;docker
        ;;editorconfig      ; let someone else argue about tabs vs spaces

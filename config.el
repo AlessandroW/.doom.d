@@ -46,6 +46,7 @@
 (load! "config/org-roam.el")
 (load! "config/ui.el")
 (load! "config/checkers.el")
+(load! "config/tools.el")
 
 (map! "C-x C-b" 'ivy-switch-buffer ) ;; Don't open the buffer menu when pressing Ctrl for too long.
 (map! "C-ö" #'other-window

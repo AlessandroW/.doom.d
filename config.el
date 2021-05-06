@@ -51,3 +51,6 @@
 (map! "C-x C-b" 'ivy-switch-buffer ) ;; Don't open the buffer menu when pressing Ctrl for too long.
 (map! "C-ö" #'other-window
       "C-;" #'other-window)
+
+(map! :n "Ü" #'evil-backward-paragraph)
+(map! :n "*" #'evil-forward-paragraph)

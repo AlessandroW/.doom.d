@@ -47,6 +47,7 @@
 (load! "config/ui.el")
 (load! "config/checkers.el")
 (load! "config/tools.el")
+(load! "config/completion.el")
 
 (map! "C-x C-b" 'ivy-switch-buffer ) ;; Don't open the buffer menu when pressing Ctrl for too long.
 (map! "C-ö" #'other-window
@@ -54,3 +55,27 @@
 
 (map! :n "Ü" #'evil-backward-paragraph)
 (map! :n "*" #'evil-forward-paragraph)
+
+(map! :mode 'org-mode :i "C-c TAB" #'org-table-toggle-column-width)
+
+(defun copy-rectangle-to-system-clipboard (start end)
+  "Like `copy-rectangle-as-kill', but also copy to system clipboard."
+  (interactive "r")
+  (call-interactively #'copy-rectangle-as-kill)
+  (with-temp-buffer
+    (yank-rectangle)
+    (delete-trailing-whitespace)
+    (funcall interprogram-cut-function (buffer-string))))
+(map! "C-x r M-c" #'copy-rectangle-to-system-clipboard)
+
+
+(after! 'python-mode
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-tramp-connection "/home/wollek/.pyenv/versions/3.8.8/bin/pyls")
+                    :major-modes '(python-mode)
+                    :remote? t
+                    :server-id 'pyls-remote)))
+
+;; Projetile
+(setq projectile-indexing-method 'alien)  ;; No projectile post-processing, better for remote work
+(setq projectile-enable-caching nil)

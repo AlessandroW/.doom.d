@@ -68,13 +68,15 @@
     (funcall interprogram-cut-function (buffer-string))))
 (map! "C-x r M-c" #'copy-rectangle-to-system-clipboard)
 
+(after! tramp
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
-(after! 'python-mode
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-tramp-connection "/home/wollek/.pyenv/versions/3.8.8/bin/pyls")
-                    :major-modes '(python-mode)
-                    :remote? t
-                    :server-id 'pyls-remote)))
+(after! lsp-mode
+(lsp-register-client
+    (make-lsp-client :new-connection (lsp-tramp-connection "pylsp")
+                     :major-modes '(python-mode)
+                     :remote? t
+                     :server-id 'pylsp-remote)))
 
 ;; Projetile
 (setq projectile-indexing-method 'alien)  ;; No projectile post-processing, better for remote work

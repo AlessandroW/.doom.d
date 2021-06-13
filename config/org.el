@@ -39,4 +39,7 @@
 
 
   (add-to-list 'org-link-frame-setup '(file . find-file-other-window))
+
+  ;; https://superuser.com/questions/530363/emacs-org-mode-how-to-disable-visual-line-wrap-for-agenda-buffers-only
+  (add-hook 'org-mode-hook (lambda () (visual-line-mode -1)))
 )

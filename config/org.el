@@ -3,3 +3,6 @@
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/org/")
+
+;; Use a separate inbox to not mess up SyncThing and Orgzly
+(setq +org-capture-todo-file "~/org/desktop_inbox.org")

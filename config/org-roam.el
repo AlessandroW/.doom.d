@@ -70,7 +70,7 @@
     "Before-save-hook for org-roam to add hugo_tags if roam_tags exist."
     (when (string-equal major-mode "org-mode")
       (alessandrow-duplicate-roam-tags-as-hugo-tags)))
-  (add-hook 'before-save-hook 'alessandrow-org-roam-mode-before-save-hook)
+  ;; (add-hook 'before-save-hook 'alessandrow-org-roam-mode-before-save-hook)
 
 
   (add-to-list 'org-link-frame-setup '(file . find-file-other-window))

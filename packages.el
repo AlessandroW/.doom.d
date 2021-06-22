@@ -52,3 +52,4 @@
 (package! org-ref)
 (package! org-roam-server)
 (package! ox-hugo)
+(package! origami)

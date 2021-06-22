@@ -81,3 +81,11 @@
 ;; Projetile
 (setq projectile-indexing-method 'alien)  ;; No projectile post-processing, better for remote work
 (setq projectile-enable-caching nil)
+
+
+(after! python
+  (add-hook! 'python-mode-hook #'origami-mode)
+  (map! :n "z c" #'origami-toggle-node)
+  (map! :n "z o" #'origami-toggle-node)
+  (map! :n "z m" #'origami-toggle-all-nodes)
+  )

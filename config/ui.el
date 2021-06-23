@@ -25,3 +25,8 @@
   (setq doom-font (font-spec :family "monospace" :size 14)
         doom-variable-pitch-font (font-spec :family "sans" :size 14)
         doom-big-font (font-spec :family "monospace" :size 20)))
+
+(when IS-MAC
+  (setq doom-font (font-spec :family "Fira Code" :size 14)
+        doom-variable-pitch-font (font-spec :family "Baskerville" :size 14)
+        doom-big-font (font-spec :family "Fira Code" :size 20)))

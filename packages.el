@@ -49,7 +49,11 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
+;; Org
 (package! org-ref)
 (package! org-roam-server)
 (package! ox-hugo)
+(package! org-super-agenda)
+
+;; Code folding
 (package! origami)

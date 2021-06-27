@@ -79,8 +79,9 @@
                      :server-id 'pylsp-remote)))
 
 ;; Projetile
-(setq projectile-indexing-method 'alien)  ;; No projectile post-processing, better for remote work
-(setq projectile-enable-caching nil)
+(after! projectile
+        (setq! projectile-indexing-method 'alien  ;; No projectile post-processing, better for remote work
+               projectile-enable-caching nil))
 
 
 (after! python
@@ -89,3 +90,13 @@
   (map! :n "z o" #'origami-toggle-node)
   (map! :n "z m" #'origami-toggle-all-nodes)
   )
+
+
+(use-package! org-super-agenda
+  :after org-agenda
+  :init (setq! org-super-agenda-groups '((:name "Home"
+                                                :auto-outline-path t)
+                                         (:name "Test"
+                                                :todo "TODO")
+                                         ))
+  :config (org-super-agenda-mode))

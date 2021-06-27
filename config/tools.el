@@ -3,6 +3,7 @@
 ;; Lookup
 (setq +lookup-open-url-fn #'eww)
 
+(after! org
 ;; Helm-Bibtex
 ;; Open PDF in Evince not Firefox
 (setq helm-external-programs-associations '(("pdf" . (if (eq system-type 'gnu/linux) "open" "evince"))))
@@ -26,4 +27,4 @@
         ":PROPERTIES:\n"
         ":NOTER_DOCUMENT: ${file}\n"
         ":END:\n\n"
-        ))
+        )))

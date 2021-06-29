@@ -17,11 +17,11 @@
 (setq evil-snipe-scope 'whole-visible)
 
 (when (> (display-pixel-height) 1200)
-  (setq doom-font (font-spec :family "monospace" :size 21)
+  (setq doom-font (font-spec :family "Fira Code" :size 21)
         doom-variable-pitch-font (font-spec :family "sans" :size 21)
-        doom-big-font (font-spec :family "monospace" :size 26)))
+        doom-big-font (font-spec :family "Fira Code" :size 26)))
 
 (when (< (display-pixel-height) 1200)
-  (setq doom-font (font-spec :family "monospace" :size 14)
+  (setq doom-font (font-spec :family "Fira Code" :size 14)
         doom-variable-pitch-font (font-spec :family "sans" :size 14)
-        doom-big-font (font-spec :family "monospace" :size 20)))
+        doom-big-font (font-spec :family "Fira Code" :size 20)))

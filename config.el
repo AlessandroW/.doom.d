@@ -52,6 +52,15 @@
 (map! "C-x C-b" 'ivy-switch-buffer ) ;; Don't open the buffer menu when pressing Ctrl for too long.
 (map! "C-ö" #'other-window
       "C-;" #'other-window)
+;; Use the mouse to go to the previous and next buffer.
+(map! "<mouse-8>" 'previous-buffer )
+(map! "<mouse-9>" 'next-buffer )
+
+;;; :ui
+(map! (:when (featurep! :ui popup)
+       "C-ä"   #'+popup/toggle))
+
+
 
 (map! :n "Ü" #'evil-backward-paragraph)
 (map! :n "*" #'evil-forward-paragraph)

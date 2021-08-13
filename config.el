@@ -43,7 +43,6 @@
 
 
 (load! "config/org.el")
-(load! "config/org-roam.el")
 (load! "config/ui.el")
 (load! "config/checkers.el")
 (load! "config/tools.el")

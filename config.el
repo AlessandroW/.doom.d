@@ -58,7 +58,7 @@
 
 ;;; :ui
 (map! (:when (featurep! :ui popup)
-       "C-ä"   #'+popup/toggle))
+       "C-'"   #'+popup/toggle))
 
 
 

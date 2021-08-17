@@ -70,6 +70,4 @@
       (alessandrow-duplicate-roam-tags-as-hugo-tags)))
   ;; (add-hook 'before-save-hook 'alessandrow-org-roam-mode-before-save-hook)
 
-
-  (add-to-list 'org-link-frame-setup '(file . find-file-other-window))
 )

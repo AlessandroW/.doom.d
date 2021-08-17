@@ -9,7 +9,7 @@
   (setq! +org-capture-todo-file "~/org/desktop_inbox.org")
 
   (add-to-list 'org-emphasis-alist
-             '("_" (:foreground "#ff6655" :weight italic)))
+             '("/" (:foreground "#ff6655" :weight italic)))
   (add-to-list 'org-emphasis-alist
              '("*" (:foreground "#282c34" :background "#ECBE7B" :weight bold)))
   (setq org-hide-emphasis-markers t)

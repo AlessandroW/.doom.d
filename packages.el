@@ -66,3 +66,5 @@
 (package! org-fragtog)
 (package! org-appear :recipe (:host github :repo "awth13/org-appear"))
 (package! olivetti)
+(package! mixed-pitch)
+(package! company-posframe :recipe (:host github :repo "tumashu/company-posframe") :pin "c7a820a")

@@ -23,8 +23,5 @@
   )
 (use-package! org-appear
   :after org
-  :hook (org-mode . org-appear-mode)
-  :config (setq
-           org-appear-autolinks t
-           org-appear-autoentities t
-           org-appear-autosubmarkers t ))
+  :config (setq org-hide-emphasis-markers t)
+  :hook (org-mode . org-appear-mode))

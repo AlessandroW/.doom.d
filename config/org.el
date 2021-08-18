@@ -19,9 +19,16 @@
 
 (use-package! org-fragtog
   :after org
-  :hook (org-mode . org-fragtog-mode)
-  )
+  :hook (org-mode . org-fragtog-mode))
 (use-package! org-appear
   :after org
   :config (setq org-hide-emphasis-markers t)
   :hook (org-mode . org-appear-mode))
+(use-package! olivetti
+  :after org
+  :hook (org-roam-mode . olivetti-mode)
+  :config
+    (setq olivetti-min-body-width 50
+          olivetti-body-width 100
+          olivetti-style t ; fantastic new layout
+          olivetti-margin-width 12))

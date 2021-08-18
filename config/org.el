@@ -12,8 +12,6 @@
              '("/" (:foreground "#ff6655" :weight italic)))
   (add-to-list 'org-emphasis-alist
              '("*" (:foreground "#282c34" :background "#ECBE7B" :weight bold)))
-  (setq org-hide-emphasis-markers t)
-
 
   (setq! org-agenda-files (-concat
                            '("~/org/next_action.org" "~/org/inbox.org" "~/org/desktop_inbox.org")
@@ -23,3 +21,10 @@
   :after org
   :hook (org-mode . org-fragtog-mode)
   )
+(use-package! org-appear
+  :after org
+  :hook (org-mode . org-appear-mode)
+  :config (setq
+           org-appear-autolinks t
+           org-appear-autoentities t
+           org-appear-autosubmarkers t ))

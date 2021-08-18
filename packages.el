@@ -61,3 +61,5 @@
 ;; Writing
 (package! wwg :recipe (:host github :repo "ag91/writer-word-goals")
   :pin "46c8a7c")
+
+(package! nroam)

@@ -71,3 +71,8 @@
   ;; (add-hook 'before-save-hook 'alessandrow-org-roam-mode-before-save-hook)
 
 )
+(use-package! nroam
+  :after org-roam
+  :config
+  (add-hook 'org-roam-mode-hook  #'nroam-setup-maybe)
+)

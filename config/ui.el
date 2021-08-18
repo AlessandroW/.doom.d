@@ -17,8 +17,8 @@
 (setq evil-snipe-scope 'whole-visible)
 
 (when (> (display-pixel-height) 1200)
-  (setq doom-font (font-spec :family "Fira Code" :size 21)
-        doom-variable-pitch-font (font-spec :family "DejaVu Sans" :style "Regular" :size 30 :weight 'regular)
+  (setq doom-font (font-spec :family "Fira Code" :size 22)
+        doom-variable-pitch-font (font-spec :family "DejaVu Sans" :style "Regular" :size 22 :weight 'regular)
         doom-big-font (font-spec :family "Fira Code" :size 26)))
 
 (when (< (display-pixel-height) 1200)
@@ -28,3 +28,11 @@
 
 (use-package! company-posframe
   :hook (company-mode . company-posframe-mode))
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            (kill-local-variable 'line-spacing)
+            (setq-local default-text-properties
+                        '(line-spacing 0.0
+                          line-height 1.3
+                          ))))

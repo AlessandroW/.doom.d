@@ -63,3 +63,4 @@
   :pin "46c8a7c")
 
 (package! nroam)
+(package! org-fragtog)

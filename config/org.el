@@ -18,3 +18,8 @@
   (setq! org-agenda-files (-concat
                            '("~/org/next_action.org" "~/org/inbox.org" "~/org/desktop_inbox.org")
                            (directory-files-recursively "~/org/projects" org-agenda-file-regexp))))
+
+(use-package! org-fragtog
+  :after org
+  :hook (org-mode . org-fragtog-mode)
+  )

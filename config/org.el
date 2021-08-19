@@ -28,15 +28,6 @@
   :after org
   :config (setq org-hide-emphasis-markers t)
   :hook (org-mode . org-appear-mode))
-(use-package! olivetti
-  :after org
-  ;; :hook (org-roam-mode . olivetti-mode)
-  :config
-    (setq olivetti-min-body-width 50
-          olivetti-body-width 100
-          olivetti-style t ; fantastic new layout
-          olivetti-margin-width 12))
-
 (use-package! mixed-pitch
   :hook (org-mode . mixed-pitch-mode)
   :config

@@ -70,9 +70,23 @@
       (alessandrow-duplicate-roam-tags-as-hugo-tags)))
   ;; (add-hook 'before-save-hook 'alessandrow-org-roam-mode-before-save-hook)
 
-)
+  )
+
 (use-package! nroam
   :after org-roam
   :config
-  (add-hook 'org-roam-mode-hook  #'nroam-setup-maybe)
-)
+  (add-hook 'org-roam-file-setup-hook 'nroam-setup-maybe)
+  )
+
+(use-package! olivetti
+  :after org
+  ;; :hook (org-roam-mode . me/olivetti-mode)
+  :config
+  (setq olivetti-min-body-width 50
+        olivetti-body-width 100
+        olivetti-style t ; fantastic new layout
+        olivetti-margin-width 12)
+  (defun me/olivetti-mode ()
+    "Start olivetti."
+    (olivetti-mode))
+  (add-hook 'org-roam-file-setup-hook 'me/olivetti-mode))

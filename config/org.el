@@ -15,7 +15,18 @@
 
   (setq! org-agenda-files (-concat
                            '("~/org/next_action.org" "~/org/inbox.org" "~/org/desktop_inbox.org")
-                           (directory-files-recursively "~/org/projects" org-agenda-file-regexp))))
+                           (directory-files-recursively "~/org/projects" org-agenda-file-regexp)))
+  (custom-set-faces!
+    '(org-link :weight bold :underline "#51afef" :foreground "brightwhite")
+    '(org-level-1 :height 1.3 :weight bold :width expanded)
+    '(org-level-2 :height 1.1 :weight bold :width expanded)
+
+    )
+  (setq org-superstar-headline-bullets-list '("› ")
+        org-superstar-item-bullet-alist '((?* . ?⋆)
+                                          (?+ . ?‣)
+                                          (?- . ?•)))
+  )
 (defun no-line-numbers ()
   (setq-local display-line-numbers nil)
 )

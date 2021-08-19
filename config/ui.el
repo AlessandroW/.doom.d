@@ -26,8 +26,8 @@
         doom-variable-pitch-font (font-spec :family "DejaVu Sans" :style "Regular" :size 16 :weight 'regular)
         doom-big-font (font-spec :family "Fira Code" :size 20)))
 
-(use-package! company-posframe
-  :hook (company-mode . company-posframe-mode))
+;; (use-package! company-posframe
+;;   :hook (company-mode . company-posframe-mode))
 
 (add-hook 'org-mode-hook
           (lambda ()

@@ -81,7 +81,6 @@
 
 (use-package! olivetti
   :after org
-  ;; :hook (org-roam-mode . me/olivetti-mode)
   :config
   (setq olivetti-min-body-width 50
         olivetti-body-width 100

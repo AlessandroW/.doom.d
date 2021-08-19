@@ -75,6 +75,7 @@
 (use-package! nroam
   :after org-roam
   :config
+  (setq +org-roam-open-buffer-on-find-file nil)
   (add-hook 'org-roam-file-setup-hook 'nroam-setup-maybe)
   )
 

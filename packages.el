@@ -51,7 +51,6 @@
 
 ;; Org
 (package! org-ref)
-(package! org-roam-server)
 (package! ox-hugo)
 (package! org-super-agenda)
 
@@ -68,3 +67,8 @@
 (package! olivetti)
 (package! mixed-pitch)
 (package! company-posframe :recipe (:host github :repo "tumashu/company-posframe") :pin "c7a820a")
+
+;; ORG ROAM UI
+(package! websocket)
+(package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out"))
+  :pin "73a6573")

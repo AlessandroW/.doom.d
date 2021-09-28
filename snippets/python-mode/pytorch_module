@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: PyTorch Module
+# key: Module
+# --
+class $1(torch.utils.data.Module):
+
+def __init__(self):
+    super().__init__()
+    pass
+
+def forward(self, x):
+    pass

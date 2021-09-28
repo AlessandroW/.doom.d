@@ -26,13 +26,12 @@
         doom-variable-pitch-font (font-spec :family "DejaVu Sans" :style "Regular" :size 16 :weight 'regular)
         doom-big-font (font-spec :family "Fira Code" :size 20)))
 
-;; (use-package! company-posframe
-;;   :hook (company-mode . company-posframe-mode))
 
-(add-hook 'org-mode-hook
-          (lambda ()
-            (kill-local-variable 'line-spacing)
-            (setq-local default-text-properties
-                        '(line-spacing 0.0
-                          line-height 1.3
-                          ))))
+(defun my/org-line-spacing()
+  ;; (kill-local-variable 'line-spacing)
+
+  (setq-local default-text-properties
+              '(line-height 1.25
+              line-spacing 0.1)
+              x-underline-at-descent-line t))
+(add-hook 'org-mode-hook 'my/org-line-spacing)

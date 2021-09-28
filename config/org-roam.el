@@ -90,7 +90,8 @@
   (defun me/olivetti-mode ()
     "Start olivetti."
     (olivetti-mode))
-  (add-hook 'org-roam-file-setup-hook 'me/olivetti-mode))
+  (add-hook 'org-mode 'me/olivetti-mode))
+
 (use-package! org-transclusion
   :defer
   :after org

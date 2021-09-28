@@ -67,6 +67,11 @@
 (package! olivetti)
 (package! mixed-pitch)
 (package! company-posframe :recipe (:host github :repo "tumashu/company-posframe") :pin "c7a820a")
+(package! org-transclusion
+  :recipe (:host github
+           :repo "nobiot/org-transclusion"
+           :branch "main"
+           :files ("*.el")))
 
 ;; ORG ROAM UI
 (package! websocket)

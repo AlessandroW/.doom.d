@@ -5,20 +5,20 @@
 (setq org-roam-capture-templates
       '(("d" "default" plain
          "%?\n* Folgezettel\n\n* Related\n\n* References"
-         :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}"
+         :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
                             "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+filetags: :zettelkastenv2:\n\n")
-         :unnarrowed t)
-        ))
+         :unnarrowed t)))
+
 (setq org-roam-capture-ref-templates
-      '(("r" "ref" plain (function org-roam-capture--get-point)
+      '(("r" "ref" plain
          "%?\n* Folgezettel\n\n* Related\n\n* References\n- [[${ref}][Source]]"
-         :if-new (file+head "web/${slug}"
-                            "#+TITLE: \n#+ROAM_ALIAS: \"${title}\"\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+filetags: :zettelkastenv2:literature_note:\n\n")
+         :if-new (file+head "web/${slug}.org"
+                            "#+TITLE: ${title}\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+filetags: :zettelkastenv2:literature_note:\n\n")
          :roam_refs "${ref}"
          :unnarrowed t)
-        ("t" "ref" plain (function org-roam-capture--get-point)
+        ("t" "ref" plain
          "%?"
-         :if-new (file+head "${ref}" "")
+         :if-new (file+head "web/${ref}.org" "#+TITLE: ${title}\n")
          :unnarrowed t)
         ))
 

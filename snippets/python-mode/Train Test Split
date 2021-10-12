@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: Train Test Split
+# key: traintestsplit
+# --
+
+train_set, val_set, test_set = torch.utils.data.random_split($1, [7000, 1000, 2000], generator=torch.Generator().manual_seed(42))

@@ -1,43 +1,42 @@
 ;;; config/org-roam.el -*- lexical-binding: t; -*-
 
 ;; ORG ROAM
-(add-hook 'after-init-hook 'org-roam-mode)
 (setq org-roam-directory "~/org/org-roam")
-
 (setq org-roam-capture-templates
-'(("d" "default" plain
-        (function org-roam-capture--get-point)
-        "%?\n* Folgezettel\n\n* Related\n\n* References"
-        :file-name "%<%Y%m%d%H%M%S>-${slug}"
-        :head "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+roam_alias:\n#+roam_tags: \"zettelkastenv2\"\n\n"
-        :unnarrowed t)
-        ))
+      '(("d" "default" plain
+         "%?\n* Folgezettel\n\n* Related\n\n* References"
+         :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                            "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+filetags: :zettelkastenv2:\n\n")
+         :unnarrowed t)))
 
 (setq org-roam-capture-ref-templates
-'(("r" "ref" plain (function org-roam-capture--get-point)
-        "%?\n* Folgezettel\n\n* Related\n\n* References\n- [[${ref}][Source]]"
-        :file-name "web/${slug}"
-        :head "#+TITLE: \n#+ROAM_ALIAS: \"${title}\"\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+roam_key: ${ref}\n#+roam_tags: \"zettelkastenv2\" \"literature note\"\n\n"
-        :unnarrowed t)
-        ("t" "ref" plain (function org-roam-capture--get-point)
-        "%?"
-        :file-name "${ref}"
-        :unnarrowed t)
+      '(("r" "ref" plain
+         "%?\n* Folgezettel\n\n* Related\n\n* References\n- [[${ref}][Source]]"
+         :if-new (file+head "web/${slug}.org"
+                            "#+TITLE: ${title}\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+filetags: :zettelkastenv2:literature_note:\n\n")
+         :roam_refs "${ref}"
+         :unnarrowed t)
+        ("t" "ref" plain
+         "%?"
+         :if-new (file+head "web/${ref}.org" "#+TITLE: ${title}\n")
+         :unnarrowed t)
         ))
 
-;; Org-Roam-Sever
-(setq org-roam-server-host "127.0.0.1"
-        org-roam-server-port 9090
-        org-roam-server-authenticate nil
-        org-roam-server-export-inline-images t
-        org-roam-server-serve-files nil
-        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
-        org-roam-server-network-poll t
-        org-roam-server-network-arrows nil
-        org-roam-server-network-label-truncate t
-        org-roam-server-network-label-truncate-length 60
-        org-roam-server-network-label-wrap-length 20)
+;; ORG ROAM UI
+(use-package! websocket
+    :after org-roam)
 
+(use-package! org-roam-ui
+    :after org-roam ;; or :after org
+;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+;;         a hookable mode anymore, you're advised to pick something yourself
+;;         if you don't care about startup time, use
+;;  :hook (after-init . org-roam-ui-mode)
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
 
 ;; OX-HUGO
 ;; FROM
@@ -72,9 +71,33 @@
       (alessandrow-duplicate-roam-tags-as-hugo-tags)))
   ;; (add-hook 'before-save-hook 'alessandrow-org-roam-mode-before-save-hook)
 
+  )
 
-  (add-to-list 'org-link-frame-setup '(file . find-file-other-window))
+;;(use-package! nroam
+  ;; :after org-roam
+  ;; :config
+  ;; (setq +org-roam-open-buffer-on-find-file nil)
+  ;; (add-hook 'org-mode-hook 'nroam-setup-maybe)
+  ;; )
 
-  ;; https://superuser.com/questions/530363/emacs-org-mode-how-to-disable-visual-line-wrap-for-agenda-buffers-only
-  (add-hook 'org-mode-hook (lambda () (visual-line-mode -1)))
-)
+(use-package! olivetti
+  :after org
+  :config
+  (setq olivetti-min-body-width 50
+        olivetti-body-width 100
+        olivetti-style t ; fantastic new layout
+        olivetti-margin-width 12)
+  (defun me/olivetti-mode ()
+    "Start olivetti."
+    (olivetti-mode))
+  (add-hook 'org-mode 'me/olivetti-mode))
+
+(use-package! org-transclusion
+  :defer
+  :after org
+  :init
+  (map!
+   :map global-map "<f12>" #'org-transclusion-add
+   :leader
+   :prefix "n"
+   :desc "Org Transclusion Mode" "t" #'org-transclusion-mode))

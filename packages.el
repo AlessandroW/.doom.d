@@ -49,7 +49,31 @@
 ;; ...Or *all* packages (NOT RECOMMENDED; will likely break things)
 ;(unpin! t)
 
+;; Org
 (package! org-ref)
-(package! org-roam-server)
 (package! ox-hugo)
+(package! org-super-agenda)
+
+;; Code folding
 (package! origami)
+
+;; Writing
+(package! wwg :recipe (:host github :repo "ag91/writer-word-goals")
+  :pin "46c8a7c")
+
+(package! nroam)
+(package! org-fragtog)
+(package! org-appear :recipe (:host github :repo "awth13/org-appear"))
+(package! olivetti)
+(package! mixed-pitch)
+(package! company-posframe :recipe (:host github :repo "tumashu/company-posframe") :pin "c7a820a")
+(package! org-transclusion
+  :recipe (:host github
+           :repo "nobiot/org-transclusion"
+           :branch "main"
+           :files ("*.el")))
+
+;; ORG ROAM UI
+(package! websocket)
+(package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out"))
+  :pin "73a6573")

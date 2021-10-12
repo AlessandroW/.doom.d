@@ -17,16 +17,25 @@
 (setq evil-snipe-scope 'whole-visible)
 
 (when (> (display-pixel-height) 1200)
-  (setq doom-font (font-spec :family "monospace" :size 21)
-        doom-variable-pitch-font (font-spec :family "sans" :size 21)
-        doom-big-font (font-spec :family "monospace" :size 26)))
+  (setq doom-font (font-spec :family "Fira Code" :size 22)
+        doom-variable-pitch-font (font-spec :family "DejaVu Sans" :style "Regular" :size 22 :weight 'regular)
+        doom-big-font (font-spec :family "Fira Code" :size 26)))
 
 (when (< (display-pixel-height) 1200)
-  (setq doom-font (font-spec :family "monospace" :size 14)
-        doom-variable-pitch-font (font-spec :family "sans" :size 14)
-        doom-big-font (font-spec :family "monospace" :size 20)))
+  (setq doom-font (font-spec :family "Fira Code" :size 14)
+        doom-variable-pitch-font (font-spec :family "DejaVu Sans" :style "Regular" :size 16 :weight 'regular)
+        doom-big-font (font-spec :family "Fira Code" :size 20)))
 
 (when IS-MAC
   (setq doom-font (font-spec :family "Fira Code" :size 14)
         doom-variable-pitch-font (font-spec :family "Baskerville" :size 14)
         doom-big-font (font-spec :family "Fira Code" :size 20)))
+
+(defun my/org-line-spacing()
+  ;; (kill-local-variable 'line-spacing)
+
+  (setq-local default-text-properties
+              '(line-height 1.25
+              line-spacing 0.1)
+              x-underline-at-descent-line t))
+(add-hook 'org-mode-hook 'my/org-line-spacing)

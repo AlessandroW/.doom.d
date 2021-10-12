@@ -52,6 +52,15 @@
 (map! "C-x C-b" 'ivy-switch-buffer ) ;; Don't open the buffer menu when pressing Ctrl for too long.
 (map! "C-ö" #'other-window
       "C-;" #'other-window)
+;; Use the mouse to go to the previous and next buffer.
+(map! "<mouse-8>" 'previous-buffer )
+(map! "<mouse-9>" 'next-buffer )
+
+;;; :ui
+(map! (:when (featurep! :ui popup)
+       "C-ä"   #'+popup/toggle))
+
+
 
 (map! :n "Ü" #'evil-backward-paragraph)
 (map! :n "*" #'evil-forward-paragraph)
@@ -79,8 +88,9 @@
                      :server-id 'pylsp-remote)))
 
 ;; Projetile
-(setq projectile-indexing-method 'alien)  ;; No projectile post-processing, better for remote work
-(setq projectile-enable-caching nil)
+(after! projectile
+        (setq! projectile-indexing-method 'alien  ;; No projectile post-processing, better for remote work
+               projectile-enable-caching nil))
 
 
 (after! python
@@ -89,3 +99,13 @@
   (map! :n "z o" #'origami-toggle-node)
   (map! :n "z m" #'origami-toggle-all-nodes)
   )
+
+
+(use-package! org-super-agenda
+  :after org-agenda
+  :init (setq! org-super-agenda-groups '((:name "Home"
+                                                :auto-outline-path t)
+                                         (:name "Test"
+                                                :todo "TODO")
+                                         ))
+  :config (org-super-agenda-mode))

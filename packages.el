@@ -51,7 +51,7 @@
 
 ;; Org
 (package! org-ref)
-(package! ox-hugo)
+;; (package! ox-hugo)
 (package! org-super-agenda)
 
 ;; Code folding
@@ -74,6 +74,8 @@
            :files ("*.el")))
 
 ;; ORG ROAM UI
+(unpin! org-roam)
 (package! websocket)
 (package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out"))
-  :pin "73a6573")
+  :pin "ce08e92
+")

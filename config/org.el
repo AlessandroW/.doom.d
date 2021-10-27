@@ -8,6 +8,9 @@
   ;; Use a separate inbox to not mess up SyncThing and Orgzly
   (setq! +org-capture-todo-file "~/org/desktop_inbox.org")
 
+  ;; Always display in-line iamges at start.
+  (setq! org-startup-with-inline-images t)
+
   (add-to-list 'org-emphasis-alist
              '("/" (:foreground "#ff6655" :slant italic)))
   (add-to-list 'org-emphasis-alist

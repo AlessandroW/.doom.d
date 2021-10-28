@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: literature review table
+# key: lrt
+
+# --
+#+startup: shrink
+
+| Link | <30% | <60% | <90% | <100% | Comment | Note |
+|------+------+------+------+-------+---------+------|
+| <15> |  <3> |  <3> |  <3> |   <3> | <15>    | <10> |

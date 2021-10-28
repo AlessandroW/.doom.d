@@ -1,0 +1,60 @@
+# -*- mode: snippet -*-
+# name: pytorch lightning datamodule
+# key: datamodule
+# --
+import pytorch_lightning as pl
+
+class DataModule(pl.LightningDataModule):
+    """DataModule.
+
+    Info
+    ----
+    https://pytorch-lightning.readthedocs.io/en/latest/api/pytorch_lightning.core.datamodule.html
+    """
+
+    def __init__(self, batch_size=8, num_workers=32, pin_memory=True):
+        super().__init__()
+        self.batch_size = batch_size
+        self.num_workers = num_workers
+        self.pin_memory = pin_memory
+
+    def prepare_data(self):
+        # download, split, etc...
+        # only called on 1 GPU/TPU in distributed
+        pass
+
+    def setup(self, stage):
+        # make assignments here (val/train/test split)
+        # called on every process in DDP
+        pass
+
+    def train_dataloader(self):
+        # use transform and dataset to create these using yasnippet
+        transforms = Transforms()
+        self.train_dataset = Dataset()
+
+        return torch.utils.data.DataLoader(
+            self.train_dataset,
+            batch_size=self.batch_size,
+            num_workers=self.num_workers,
+            pin_memory=self.pin_memory,
+            shuffle=True,
+        )
+
+    def val_dataloader(self):
+        transforms = Transforms()
+        self.val_dataset = Dataset()
+        return torch.utils.data.DataLoader(
+            self.val_dataset,
+            batch_size=self.batch_size,
+            num_workers=self.num_workers,
+            pin_memory=self.pin_memory,
+            shuffle=False,
+        )
+
+    def test_dataloader(self):
+        pass
+
+    def teardown(self):
+        # clean up after fit or test
+        # called on every process in DDP

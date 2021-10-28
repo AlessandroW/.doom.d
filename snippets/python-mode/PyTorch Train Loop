@@ -1,0 +1,34 @@
+# -*- mode: snippet -*-
+# name: PyTorch Train Loop
+# key: trainloop
+# --
+$0
+learning_rate = 1e-3
+optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+epochs = 11
+
+for epoch in range(1, epochs):
+    total_loss = 0
+    for t, batch in enumerate(train_loader):
+        x, y = batch
+        y_pred = model(batch)
+        loss = torch.nn.functional.mse_loss(y_pred, y)
+        total_loss += loss.item()
+        if t % 100 == 99:
+            print(f"\t{t}, {loss.item():.4}")
+
+        # Before the backward pass, use the optimizer object to zero all of the
+        # gradients for the variables it will update (which are the learnable
+        # weights of the model). This is because by default, gradients are
+        # accumulated in buffers( i.e, not overwritten) whenever .backward()
+        # is called. Checkout docs of torch.autograd.backward for more details.
+        optimizer.zero_grad()
+
+        # Backward pass: compute gradient of the loss with respect to model
+        # parameters
+        loss.backward()
+
+        # Calling the step function on an Optimizer makes an update to its
+        # parameters
+        optimizer.step()
+    print(f"Loss: {total_loss / len(train_set):.4}")

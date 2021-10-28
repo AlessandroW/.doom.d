@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: C++17 Source Block in Org Mode
+# key: <sc
+# --
+#+begin_src cpp :flags -std=c++17
+$0
+#+end_src

@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: PyTorch Dataset
+# key: Dataset
+# --
+from typing import Callable, Optional
+
+class $1(torch.utils.data.Dataset):
+
+    def __init__(self, transforms: Optional[Callable] = None):
+        self.transforms = transforms
+        pass
+
+    def __len__(self):
+        pass
+
+    def __getitem__(self, idx):
+        if transforms is not None:
+            pass

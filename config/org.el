@@ -2,11 +2,13 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq! org-directory "~/org/")
+(setq! org-directory (if (equal machine "workstation")
+                         "~/Private/org/"
+                       "~/org/"))
 
 (after! org
   ;; Use a separate inbox to not mess up SyncThing and Orgzly
-  (setq! +org-capture-todo-file "~/org/desktop_inbox.org")
+  (setq! +org-capture-todo-file (concat org-directory "desktop_inbox.org"))
 
   ;; Always display in-line iamges at start.
   (setq! org-startup-with-inline-images t)
@@ -16,9 +18,8 @@
   (add-to-list 'org-emphasis-alist
              '("*" (:foreground "#282c34" :background "#ECBE7B" :weight bold)))
 
-  (setq! org-agenda-files (-concat
-                           '("~/org/next_action.org" "~/org/inbox.org" "~/org/desktop_inbox.org")
-                           (directory-files-recursively "~/org/projects" org-agenda-file-regexp)))
+  (setq! org-agenda-files (-concat (mapcar (lambda (filename) (concat org-directory filename)) '("next_action.org" "inbox.org" "desktop_inbox.org"))
+                           (directory-files-recursively (concat org-directory "projects") org-agenda-file-regexp)))
   (custom-set-faces!
     '(org-link :weight bold :underline "#51afef" :foreground "brightwhite")
     '(org-level-1 :height 1.4 :foreground "grey" :weight bold :family "SF Pro")

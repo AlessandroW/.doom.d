@@ -1,7 +1,9 @@
 ;;; config/org-roam.el -*- lexical-binding: t; -*-
 
 ;; ORG ROAM
-(setq org-roam-directory "~/org/org-roam")
+(setq org-roam-directory (if (equal machine "workstation")
+                             "~/Private/org/org-roam"
+                           "~/org/org-roam"))
 (setq org-roam-capture-templates
       '(("d" "default" plain
          "%?\n* Folgezettel\n\n* Related\n\n* References"

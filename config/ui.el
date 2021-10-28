@@ -16,15 +16,19 @@
 ;; Use snipe for horizontal and vertical movement.
 (setq evil-snipe-scope 'whole-visible)
 
-(when (> (display-pixel-height) 1200)
-  (setq doom-font (font-spec :family "Fira Code" :size 22)
-        doom-variable-pitch-font (font-spec :family "DejaVu Sans" :style "Regular" :size 22 :weight 'regular)
-        doom-big-font (font-spec :family "Fira Code" :size 26)))
+(if (equal machine "workstation")
+    (setq doom-font (font-spec :family "Fira Code" :size 18)
+          doom-variable-pitch-font (font-spec :family "DejaVu Sans" :style "Regular" :size 18 :weight 'regular)
+          doom-big-font (font-spec :family "Fira Code" :size 22))
+  (when (> (display-pixel-height) 1200)
+    (setq doom-font (font-spec :family "Fira Code" :size 22)
+          doom-variable-pitch-font (font-spec :family "DejaVu Sans" :style "Regular" :size 22 :weight 'regular)
+          doom-big-font (font-spec :family "Fira Code" :size 26)))
 
-(when (< (display-pixel-height) 1200)
-  (setq doom-font (font-spec :family "Fira Code" :size 14)
-        doom-variable-pitch-font (font-spec :family "DejaVu Sans" :style "Regular" :size 16 :weight 'regular)
-        doom-big-font (font-spec :family "Fira Code" :size 20)))
+  (when (< (display-pixel-height) 1200)
+    (setq doom-font (font-spec :family "Fira Code" :size 14)
+          doom-variable-pitch-font (font-spec :family "DejaVu Sans" :style "Regular" :size 16 :weight 'regular)
+          doom-big-font (font-spec :family "Fira Code" :size 20))))
 
 
 (defun my/org-line-spacing()
@@ -32,6 +36,6 @@
 
   (setq-local default-text-properties
               '(line-height 1.25
-              line-spacing 0.1)
+                            line-spacing 0.1)
               x-underline-at-descent-line t))
 (add-hook 'org-mode-hook 'my/org-line-spacing)

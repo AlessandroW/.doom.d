@@ -10,6 +10,8 @@
   ;; Use a separate inbox to not mess up SyncThing and Orgzly
   (setq! +org-capture-todo-file (concat org-directory "desktop_inbox.org"))
 
+  (add-hook 'org-mode-hook 'hl-todo-mode)
+
   ;; Always display in-line iamges at start.
   (setq! org-startup-with-inline-images t)
 

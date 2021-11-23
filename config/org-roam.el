@@ -92,7 +92,7 @@
   (defun me/olivetti-mode ()
     "Start olivetti."
     (olivetti-mode))
-  (add-hook 'org-mode 'me/olivetti-mode))
+  (add-hook 'org-mode-hook 'me/olivetti-mode))
 
 (use-package! org-transclusion
   :defer

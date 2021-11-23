@@ -11,6 +11,9 @@
   (setq! +org-capture-todo-file (concat org-directory "desktop_inbox.org"))
 
   ;; Always display in-line images and latex at start.
+  (add-hook 'org-mode-hook 'hl-todo-mode)
+
+  ;; Always display in-line iamges at start.
   (setq! org-startup-with-inline-images t)
   (setq! org-startup-with-latex-preview t)
 

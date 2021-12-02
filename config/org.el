@@ -10,7 +10,14 @@
   ;; Use a separate inbox to not mess up SyncThing and Orgzly
   (setq! +org-capture-todo-file (concat org-directory "desktop_inbox.org"))
 
-  ;; Always display in-line images and latex at start.
+  ;; Tame org-open-file, which uses org-file-apps, and finally mailcap.el
+  (setq! org-file-apps
+      '((auto-mode . emacs)
+        ("\\.x?html?\\'" . "xdg-open %s")
+        ("\\.pdf\\'" . "xdg-ope, \"%s\"")
+        ("\\.pdf::\\([0-9]+\\)\\'" . "xdg-open \"%s\" -p %1")
+        ("\\.pdf.xoj" . "xournal %s")))
+
   (add-hook 'org-mode-hook 'hl-todo-mode)
 
   ;; Always display in-line iamges at start.

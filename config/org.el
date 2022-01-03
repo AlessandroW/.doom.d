@@ -7,6 +7,13 @@
                        "~/org/"))
 
 (after! org
+  ;; Keybindings
+  ;;
+  (map! :mode 'org-mode :i "C-c TAB" #'org-table-toggle-column-width)
+  (map! :mode 'org-mode :i "C-c ]" #'org-ref-insert-cite-link)
+
+
+
   ;; Use a separate inbox to not mess up SyncThing and Orgzly
   (setq! +org-capture-todo-file (concat org-directory "desktop_inbox.org"))
 
@@ -47,10 +54,64 @@
         org-superstar-item-bullet-alist '((?* . ?⋆)
                                           (?+ . ?‣)
                                           (?- . ?•)))
-  )
+  ;; Helm-Bibtex
+  (setq! zotero-dir (if (equal machine "workstation") "~/Documents/"
+                     "~/Dokumente/References/"))
+
+  ;; Open PDF in Evince not Firefox
+  (setq! helm-external-programs-associations '(("pdf" . (if (eq system-type 'gnu/linux) "open" "evince"))))
+  ;; Helm-Bibtex config
+  (setq! reftex-default-bibliography (concat zotero-dir "my_zotero_library.bib")
+        org-ref-completion-library 'org-ref-ivy-cite
+        org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
+        org-ref-default-bibliography (concat zotero-dir "my_zotero_library.bib")      org-ref-notes-function
+        (lambda (thekey)
+          (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
+            (bibtex-completion-edit-notes
+             (list (car (org-ref-get-bibtex-key-and-file thekey))))))
+        bibtex-completion-bibliography (concat zotero-dir "my_zotero_library.bib")
+        bibtex-completion-pdf-field "file"      ; For Zotero, see .bib file
+        bibtex-completion-notes-path org-roam-directory ; One org-file for per publications
+        bibtex-completion-notes-template-multiple-files
+        (concat
+         "${title}\n"
+         "* TODO Notes\n"
+         ":PROPERTIES:\n"
+         ":NOTER_DOCUMENT: ${file}\n"
+         ":END:\n\n"
+         ))
+
+
+  (defun my/copy-idlink-to-clipboard()
+    "Copy an ID link with the
+headline to killring, if no ID is there then create a new unique
+ID.  This function works only in org-mode or org-agenda buffers.
+
+The purpose of this function is to easily construct id:-links to
+org-mode items. If its assigned to a key it saves you marking the
+text and copying to the killring.
+
+© Rainer König, https://koenig-haunstetten.de/2018/02/17/improving-my-orgmode-workflow/
+"
+    (interactive)
+    (when (eq major-mode 'org-agenda-mode) ;switch to orgmode
+      (org-agenda-show)
+      (org-agenda-goto))
+    (when (eq major-mode 'org-mode) ; do this only in org-mode buffers
+      (let ((mytmphead (nth 4 (org-heading-components)))
+            (mytmpid (funcall 'org-id-get-create)) (mytmplink))
+        (progn
+          (setq mytmplink (format "[[id:%s][%s]]" mytmpid mytmphead))
+          (kill-new mytmplink)
+          (message "Copied %s to killring (clipboard)" mytmplink)))))
+
+  (map! :leader
+        :mode 'org-mode
+        :desc "Copy ID-link to clipboard"
+        "m I" #'my/copy-idlink-to-clipboard))
 (defun no-line-numbers ()
   (setq-local display-line-numbers nil)
-)
+  )
 (add-hook 'org-mode-hook 'no-line-numbers)
 
 (use-package! org-fragtog

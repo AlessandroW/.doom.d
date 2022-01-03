@@ -21,7 +21,7 @@
   (setq! org-file-apps
       '((auto-mode . emacs)
         ("\\.x?html?\\'" . "xdg-open %s")
-        ("\\.pdf\\'" . "xdg-ope, \"%s\"")
+        ("\\.pdf\\'" . "xdg-open \"%s\"")
         ("\\.pdf::\\([0-9]+\\)\\'" . "xdg-open \"%s\" -p %1")
         ("\\.pdf.xoj" . "xournal %s")))
 

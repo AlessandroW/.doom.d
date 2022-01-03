@@ -33,12 +33,12 @@
 
 
   (add-to-list 'org-emphasis-alist
-             '("/" (:foreground "#ff6655" :slant italic)))
+               '("/" (:foreground "#ff6655" :slant italic)))
   (add-to-list 'org-emphasis-alist
-             '("*" (:foreground "#282c34" :background "#ECBE7B" :weight bold)))
+               '("*" (:foreground "#282c34" :background "#ECBE7B" :weight bold)))
 
   (setq! org-agenda-files (-concat (mapcar (lambda (filename) (concat org-directory filename)) '("next_action.org" "inbox.org" "desktop_inbox.org"))
-                           (directory-files-recursively (concat org-directory "projects") org-agenda-file-regexp)))
+                                   (directory-files-recursively (concat org-directory "projects") org-agenda-file-regexp)))
   (custom-set-faces!
     '(org-link :weight bold :underline "#51afef" :foreground "brightwhite")
     '(org-level-1 :height 1.4 :foreground "grey" :weight bold :family "SF Pro")

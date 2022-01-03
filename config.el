@@ -4,10 +4,10 @@
 ;; sync' after modifying this file!
 
 
+(load! "config/local.el") ;; Defines machine name.
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
-(setq machine "workstation"
-      user-full-name "Alessandro Wollek"
+(setq user-full-name "Alessandro Wollek"
       user-mail-address (if (equal machine "workstation")
                             "alessandro.wollek@tum.de"
                           "a@wollek.dev"))
@@ -67,8 +67,6 @@
 
 (map! :n "Ü" #'evil-backward-paragraph)
 (map! :n "*" #'evil-forward-paragraph)
-
-(map! :mode 'org-mode :i "C-c TAB" #'org-table-toggle-column-width)
 
 (defun copy-rectangle-to-system-clipboard (start end)
   "Like `copy-rectangle-as-kill', but also copy to system clipboard."

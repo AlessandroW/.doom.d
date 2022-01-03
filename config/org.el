@@ -58,8 +58,6 @@
   (setq! zotero-dir (if (equal machine "workstation") "~/Documents/"
                      "~/Dokumente/References/"))
 
-  ;; Open PDF in Evince not Firefox
-  (setq! helm-external-programs-associations '(("pdf" . (if (eq system-type 'gnu/linux) "open" "evince"))))
   ;; Helm-Bibtex config
   (setq! reftex-default-bibliography (concat zotero-dir "my_zotero_library.bib")
         org-ref-completion-library 'org-ref-ivy-cite

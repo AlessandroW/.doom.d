@@ -63,8 +63,6 @@
 (map! (:when (featurep! :ui popup)
        "C-ä"   #'+popup/toggle))
 
-
-
 (map! :n "Ü" #'evil-backward-paragraph)
 (map! :n "*" #'evil-forward-paragraph)
 

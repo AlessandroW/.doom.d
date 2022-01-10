@@ -31,11 +31,3 @@
           doom-big-font (font-spec :family "Fira Code" :size 20))))
 
 
-(defun my/org-line-spacing()
-  ;; (kill-local-variable 'line-spacing)
-
-  (setq-local default-text-properties
-              '(line-height 1.25
-                            line-spacing 0.1)
-              x-underline-at-descent-line t))
-(add-hook 'org-mode-hook 'my/org-line-spacing)

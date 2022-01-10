@@ -58,34 +58,44 @@
     '(org-document-title :height 1.5 :foreground "grey" :family "SF Pro")
     '(org-indent :inherit org-hide)
     )
+
+  (defun my/org-line-spacing()
+    ;; (kill-local-variable 'line-spacing)
+
+    (setq-local default-text-properties
+                '(line-height 1.25
+                              line-spacing 0.1)
+                x-underline-at-descent-line t))
+  (add-hook 'org-mode-hook 'my/org-line-spacing)
+
   (setq org-superstar-headline-bullets-list '(" ")
         org-superstar-item-bullet-alist '((?* . ?⋆)
                                           (?+ . ?‣)
                                           (?- . ?•)))
   ;; Helm-Bibtex
   (setq! zotero-dir (if (equal machine "workstation") "~/Documents/"
-                     "~/Dokumente/References/"))
+                      "~/Dokumente/References/"))
 
   ;; Helm-Bibtex config
   (setq! reftex-default-bibliography (concat zotero-dir "my_zotero_library.bib")
-        org-ref-completion-library 'org-ref-ivy-cite
-        org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
-        org-ref-default-bibliography (concat zotero-dir "my_zotero_library.bib")      org-ref-notes-function
-        (lambda (thekey)
-          (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
-            (bibtex-completion-edit-notes
-             (list (car (org-ref-get-bibtex-key-and-file thekey))))))
-        bibtex-completion-bibliography (concat zotero-dir "my_zotero_library.bib")
-        bibtex-completion-pdf-field "file"      ; For Zotero, see .bib file
-        bibtex-completion-notes-path org-roam-directory ; One org-file for per publications
-        bibtex-completion-notes-template-multiple-files
-        (concat
-         "${title}\n"
-         "* TODO Notes\n"
-         ":PROPERTIES:\n"
-         ":NOTER_DOCUMENT: ${file}\n"
-         ":END:\n\n"
-         ))
+         org-ref-completion-library 'org-ref-ivy-cite
+         org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
+         org-ref-default-bibliography (concat zotero-dir "my_zotero_library.bib")      org-ref-notes-function
+         (lambda (thekey)
+           (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
+             (bibtex-completion-edit-notes
+              (list (car (org-ref-get-bibtex-key-and-file thekey))))))
+         bibtex-completion-bibliography (concat zotero-dir "my_zotero_library.bib")
+         bibtex-completion-pdf-field "file" ; For Zotero, see .bib file
+         bibtex-completion-notes-path org-roam-directory ; One org-file for per publications
+         bibtex-completion-notes-template-multiple-files
+         (concat
+          "${title}\n"
+          "* TODO Notes\n"
+          ":PROPERTIES:\n"
+          ":NOTER_DOCUMENT: ${file}\n"
+          ":END:\n\n"
+          ))
 
 
   (defun my/copy-idlink-to-clipboard()

@@ -27,11 +27,11 @@
 
   ;; Tame org-open-file, which uses org-file-apps, and finally mailcap.el
   (setq! org-file-apps
-      '((auto-mode . emacs)
-        ("\\.x?html?\\'" . "xdg-open %s")
-        ("\\.pdf\\'" . "xdg-open \"%s\"")
-        ("\\.pdf::\\([0-9]+\\)\\'" . "xdg-open \"%s\" -p %1")
-        ("\\.pdf.xoj" . "xournal %s")))
+         '((auto-mode . emacs)
+           ("\\.x?html?\\'" . "xdg-open %s")
+           ("\\.pdf\\'" . "xdg-open \"%s\"")
+           ("\\.pdf::\\([0-9]+\\)\\'" . "xdg-open \"%s\" -p %1")
+           ("\\.pdf.xoj" . "xournal %s")))
 
   (add-hook 'org-mode-hook 'hl-todo-mode)
 
@@ -113,7 +113,7 @@ text and copying to the killring.
     (when (eq major-mode 'org-agenda-mode) ;switch to orgmode
       (org-agenda-show)
       (org-agenda-goto))
-    (when (eq major-mode 'org-mode) ; do this only in org-mode buffers
+    (when (eq major-mode 'org-mode)     ; do this only in org-mode buffers
       (let ((mytmphead (nth 4 (org-heading-components)))
             (mytmpid (funcall 'org-id-get-create)) (mytmplink))
         (progn

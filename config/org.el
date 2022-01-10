@@ -12,7 +12,15 @@
   (map! :mode 'org-mode :i "C-c TAB" #'org-table-toggle-column-width)
   (map! :mode 'org-mode :i "C-c ]" #'org-ref-insert-cite-link)
 
-
+  ;; HACK ignore Invalid base64 data errors. These will stop further execution.
+  ;; I get the error message:
+  ;; Error in post-command-hook (org-roam-buffer--redisplay-h): (error "Invalid base64 data")
+  ;; See: https://github.com/hlissner/doom-emacs/issues/3185
+  (defadvice! no-errors/+org-inline-image-data-fn (_protocol link _description)
+    :override #'+org-inline-image-data-fn
+    "Interpret LINK as base64-encoded image data. Ignore all errors."
+    (ignore-errors
+      (base64-decode-string link)))
 
   ;; Use a separate inbox to not mess up SyncThing and Orgzly
   (setq! +org-capture-todo-file (concat org-directory "desktop_inbox.org"))

@@ -125,6 +125,7 @@
                                          ))
   :config (org-super-agenda-mode))
 
+<<<<<<< HEAD
 (after! latex
   ;; Use pdf-tools to open PDF files
   ;; https://emacs.stackexchange.com/a/19475
@@ -135,3 +136,7 @@
   (add-hook 'TeX-after-compilation-finished-functions
             #'TeX-revert-document-buffer)
   )
+;; https://apple.stackexchange.com/a/278069
+(when IS-MAC
+  (setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin/"))
+  (setq exec-path (append exec-path '("/Library/TeX/texbin/"))))

@@ -109,3 +109,8 @@
                                                 :todo "TODO")
                                          ))
   :config (org-super-agenda-mode))
+
+;; https://apple.stackexchange.com/a/278069
+(when IS-MAC
+  (setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin/"))
+  (setq exec-path (append exec-path '("/Library/TeX/texbin/"))))

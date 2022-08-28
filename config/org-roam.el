@@ -4,16 +4,16 @@
 (setq org-roam-directory "~/org/org-roam")
 (setq org-roam-capture-templates
       '(("d" "default" plain
-         "%?\n* Folgezettel\n\n* Related\n\n* References"
+         "%?\n* Folgezettel\n\n* Index\n\n* References"
          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                            "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+filetags: :zettelkastenv2:\n\n")
+                            "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+filetags: \n\n")
          :unnarrowed t)))
 
 (setq org-roam-capture-ref-templates
       '(("r" "ref" plain
-         "%?\n* Folgezettel\n\n* Related\n\n* References\n- [[${ref}][Source]]"
+         "%?\n* Folgezettel\n\n* Index\n\n* References\n- [[${ref}][Source]]"
          :if-new (file+head "web/${slug}.org"
-                            "#+TITLE: ${title}\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+filetags: :zettelkastenv2:literature_note:\n\n")
+                            "#+TITLE: ${title}\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+filetags: \n\n")
          :roam_refs "${ref}"
          :unnarrowed t)
         ("t" "ref" plain
@@ -21,7 +21,6 @@
          :if-new (file+head "web/${ref}.org" "#+TITLE: ${title}\n")
          :unnarrowed t)
         ))
-
 ;; ORG ROAM UI
 (use-package! websocket
     :after org-roam)

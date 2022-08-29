@@ -80,11 +80,27 @@
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
 (after! lsp-mode
-(lsp-register-client
-    (make-lsp-client :new-connection (lsp-tramp-connection "pylsp")
-                     :major-modes '(python-mode)
-                     :remote? t
-                     :server-id 'pylsp-remote)))
+  ;; Ignore these directories
+  ;; See https://github.com/emacs-lsp/lsp-mode/issues/1085
+  (dolist (dir '(
+                 "[/\\\\]env"
+                 "[/\\\\]venv"
+                 "[/\\\\]build"
+                 "[/\\\\]node_modules"
+                 ))
+    (push dir lsp-file-watch-ignored))
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-tramp-connection "pylsp")
+                    :major-modes '(python-mode)
+                    :remote? t
+                    :server-id 'pylsp-remote))
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-tramp-connection "clangd-15")
+                    :major-modes '(c++-mode)
+                    :remote? t
+                    :server-id 'clangd-remote))
+
+  )
 
 ;; Projetile
 (after! projectile

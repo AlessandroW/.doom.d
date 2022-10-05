@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: fragile frame
+# key: fragile
+# --
+\begin{frame}[fragile]{${Title}}
+$0
+\end{frame}

@@ -9,7 +9,7 @@ class DataModule(pl.LightningDataModule):
 
     Info
     ----
-    https://pytorch-lightning.readthedocs.io/en/latest/api/pytorch_lightning.core.datamodule.html
+    https://pytorch-lightning.readthedocs.io/en/latest/data/datamodule.html
     """
 
     def __init__(self, batch_size=8, num_workers=32, pin_memory=True):
@@ -23,7 +23,7 @@ class DataModule(pl.LightningDataModule):
         # only called on 1 GPU/TPU in distributed
         pass
 
-    def setup(self, stage):
+    def setup(self, stage=None):
         # make assignments here (val/train/test split)
         # called on every process in DDP
         pass

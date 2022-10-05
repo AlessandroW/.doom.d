@@ -57,21 +57,22 @@
 
 
   (add-to-list 'org-emphasis-alist
-               '("/" (:foreground "#ff6655" :slant italic)))
+               '("/" (:slant italic)))
   (add-to-list 'org-emphasis-alist
-               '("*" (:foreground "#282c34" :background "#ECBE7B" :weight bold)))
+               '("*" (:foreground "#ff6655" :weight bold)))
 
-  (setq! org-agenda-files (-concat (mapcar (lambda (filename) (concat org-directory filename)) '("next_action.org" "inbox.org" "desktop_inbox.org"))
+  (setq! org-agenda-files (-concat (mapcar (lambda (filename) (concat org-directory filename)) '("private.org" "inbox.org" "desktop_inbox.org" "work.org"))
                                    (directory-files-recursively (concat org-directory "projects") org-agenda-file-regexp)))
+  ;; ;; This should be done according to a theme
   (custom-set-faces!
-    '(org-link :weight bold :underline "#51afef" :foreground "brightwhite")
-    '(org-level-1 :height 1.4 :foreground "grey" :weight bold :family "SF Pro")
-    '(org-level-2 :height 1.2 :foreground "grey" :weight bold :family "SF Pro")
-    '(org-level-3 :height 1.1 :foreground "grey" :weight bold :family "SF Pro")
-    '(org-level-4 :height 1.1 :foreground "grey" :weight bold :family "SF Pro")
-    '(org-level-5 :height 1.0 :foreground "grey" :weight bold :family "SF Pro")
-    '(org-level-6 :height 1.0 :foreground "grey" :weight bold :family "SF Pro")
-    '(org-document-title :height 1.5 :foreground "grey" :family "SF Pro")
+    `(org-link :weight medium :underline ,(face-foreground 'link) :foreground ,(face-foreground 'default))
+    '(org-level-1 :height 1.4)
+    '(org-level-2 :height 1.2)
+    '(org-level-3 :height 1.1)
+    '(org-level-4 :height 1.1)
+    '(org-level-5 :height 1.0)
+    '(org-level-6 :height 1.0)
+    `(org-document-title :height 1.5 :foreground ,(face-foreground 'default))
     '(org-indent :inherit org-hide)
     )
 

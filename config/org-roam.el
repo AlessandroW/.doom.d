@@ -6,16 +6,16 @@
                            "~/org/org-roam"))
 (setq org-roam-capture-templates
       '(("d" "default" plain
-         "%?\n* Folgezettel\n\n* Related\n\n* General\n\n* References"
+         "%?\n* Folgezettel\n\n* Related\n\n* Index\n\n* References"
          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                            "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+filetags: :template_v2.1:\n\n")
+                            "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+filetags:\n\n")
          :unnarrowed t)))
 
 (setq org-roam-capture-ref-templates
       '(("r" "ref" plain
-         "%?\n* Folgezettel\n\n* Related\n\n* General\n\n* References\n- [[${ref}][Source]]"
+         "%?\n* Folgezettel\n\n* Related\n\n* Index\n\n* References\n- [[${ref}][Source]]"
          :if-new (file+head "web/${slug}.org"
-                            "#+TITLE: ${title}\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+filetags: :template_v2.1:literature_note:\n\n")
+                            "#+TITLE: ${title}\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+filetags:\n\n")
          :roam_refs "${ref}"
          :unnarrowed t)
         ("t" "ref" plain
@@ -28,17 +28,17 @@
 (use-package! websocket
     :after org-roam)
 
-(use-package! org-roam-ui
-    :after org-roam ;; or :after org
-;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
-;;         a hookable mode anymore, you're advised to pick something yourself
-;;         if you don't care about startup time, use
-;;  :hook (after-init . org-roam-ui-mode)
-    :config
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow t
-          org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
+;; (use-package! org-roam-ui
+;;     :after org-roam ;; or :after org
+;; ;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+;; ;;         a hookable mode anymore, you're advised to pick something yourself
+;; ;;         if you don't care about startup time, use
+;; ;;  :hook (after-init . org-roam-ui-mode)
+;;     :config
+;;     (setq org-roam-ui-sync-theme t
+;;           org-roam-ui-follow t
+;;           org-roam-ui-update-on-save t
+;;           org-roam-ui-open-on-start t))
 
 ;; OX-HUGO
 ;; FROM

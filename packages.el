@@ -51,7 +51,6 @@
 
 ;; Org
 (package! org-ref)
-;; (package! ox-hugo)
 (package! org-super-agenda)
 
 ;; Code folding
@@ -61,7 +60,6 @@
 (package! wwg :recipe (:host github :repo "ag91/writer-word-goals")
   :pin "46c8a7c")
 
-(package! nroam)
 (package! org-fragtog)
 (package! org-appear :recipe (:host github :repo "awth13/org-appear"))
 (package! olivetti)
@@ -72,10 +70,3 @@
            :repo "nobiot/org-transclusion"
            :branch "main"
            :files ("*.el")))
-
-;; ORG ROAM UI
-(unpin! org-roam)
-(package! websocket)
-(package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out"))
-  :pin "ce08e92
-")

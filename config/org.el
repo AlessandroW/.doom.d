@@ -16,6 +16,18 @@
   (map! :mode 'org-mode :i "C-c TAB" #'org-table-toggle-column-width)
   (map! :mode 'org-mode :i "C-c ]" #'org-ref-insert-cite-link)
 
+  ;; Insert Time Samp
+  (defun org-insert-timestamp ()
+    "Insert current time."
+    (interactive)
+    (org-insert-time-stamp (current-time)))
+
+
+  ;; Org Mode Clock Persistent
+  (setq! org-clock-persist 'history)
+  (org-clock-persistence-insinuate)
+
+
   ;; HACK ignore Invalid base64 data errors. These will stop further execution.
   ;; I get the error message:
   ;; Error in post-command-hook (org-roam-buffer--redisplay-h): (error "Invalid base64 data")
@@ -145,3 +157,7 @@ text and copying to the killring.
   :hook (org-mode . mixed-pitch-mode)
   :config
   (setq mixed-pitch-face 'variable-pitch))
+
+(defun my/insert-inactive-timestamp ()
+  (interactive)
+  (org-insert-time-stamp nil t t nil nil nil))

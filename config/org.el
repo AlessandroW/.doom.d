@@ -141,11 +141,27 @@ text and copying to the killring.
   (map! :leader
         :mode 'org-mode
         :desc "Copy ID-link to clipboard"
-        "m I" #'my/copy-idlink-to-clipboard))
-(defun no-line-numbers ()
-  (setq-local display-line-numbers nil)
+        "m I" #'my/copy-idlink-to-clipboard)
+  (defun my/org-set-creation-date-heading-property ()
+    (save-excursion
+      (org-back-to-heading)
+      (org-set-property "CREATED" (format-time-string "[%Y-%m-%d %T]"))))
+
+  (add-hook 'org-insert-heading-hook 'my/org-set-creation-date-heading-property)
+  (defun no-line-numbers ()
+    (setq-local display-line-numbers nil))
+  (add-hook 'org-mode-hook 'no-line-numbers)
+
+  (add-hook 'find-file-hook #'my/set-org-agenda-files-faces)
+  (defun my/set-org-agenda-files-faces ()
+    "Set the faces for the ORG-AGENDA-FILES.
+TODO lists need a different faces than org documents."
+    (when (-contains-p org-agenda-files buffer-file-name)
+      (face-remap-add-relative 'org-level-1 :height 1.0 :weight 'light)
+      (face-remap-add-relative 'org-link :height 1.0 :weight 'light)))
+
+  ;; END OF after! ORG
   )
-(add-hook 'org-mode-hook 'no-line-numbers)
 
 (use-package! org-fragtog
   :after org

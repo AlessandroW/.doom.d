@@ -79,10 +79,10 @@
     ;; (kill-local-variable 'line-spacing)
 
     (setq-local default-text-properties
-                '(line-height 1.25
+                '(line-height 1.5
                               line-spacing 0.1)
                 x-underline-at-descent-line t))
-  (add-hook 'org-mode-hook 'my/org-line-spacing)
+  (add-hook 'mixed-pitch-mode-hook 'my/org-line-spacing)
 
   (setq org-superstar-headline-bullets-list '(" ")
         org-superstar-item-bullet-alist '((?* . ?⋆)
@@ -153,10 +153,6 @@ text and copying to the killring.
   :after org
   :config (setq org-hide-emphasis-markers t)
   :hook (org-mode . org-appear-mode))
-(use-package! mixed-pitch
-  :hook (org-mode . mixed-pitch-mode)
-  :config
-  (setq mixed-pitch-face 'variable-pitch))
 
 (defun my/insert-inactive-timestamp ()
   (interactive)

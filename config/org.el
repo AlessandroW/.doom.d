@@ -5,6 +5,10 @@
 (setq! org-directory (if (equal machine "workstation")
                          "~/Private/org/"
                        "~/org/"))
+(after! evil
+;; Use emacs keybindings in the org-mode calendar
+;; https://emacs.stackexchange.com/questions/14115/disable-evil-mode-in-calendar
+(evil-set-initial-state 'calendar-mode 'emacs))
 
 (after! org
   ;; Keybindings

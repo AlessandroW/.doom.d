@@ -89,20 +89,11 @@
         org-superstar-item-bullet-alist '((?* . ?⋆)
                                           (?+ . ?‣)
                                           (?- . ?•)))
-  ;; Helm-Bibtex
+  ;; Ivy-Bibtex
   (setq! zotero-dir (if (equal machine "workstation") "~/Documents/"
                       "~/Dokumente/References/"))
-
-  ;; Helm-Bibtex config
-  (setq! reftex-default-bibliography (concat zotero-dir "my_zotero_library.bib")
-         org-ref-completion-library 'org-ref-ivy-cite
-         org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
-         org-ref-default-bibliography (concat zotero-dir "my_zotero_library.bib")      org-ref-notes-function
-         (lambda (thekey)
-           (let ((bibtex-completion-bibliography (org-ref-find-bibliography)))
-             (bibtex-completion-edit-notes
-              (list (car (org-ref-get-bibtex-key-and-file thekey))))))
-         bibtex-completion-bibliography (concat zotero-dir "my_zotero_library.bib")
+  ;; Ivy-Bibtex config
+  (setq! bibtex-completion-bibliography (concat zotero-dir "my_zotero_library.bib")
          bibtex-completion-pdf-field "file" ; For Zotero, see .bib file
          bibtex-completion-notes-path org-roam-directory ; One org-file for per publications
          bibtex-completion-notes-template-multiple-files

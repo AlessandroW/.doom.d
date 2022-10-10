@@ -8,29 +8,33 @@
   ;; Use a separate inbox to not mess up SyncThing and Orgzly
   (setq! +org-capture-todo-file "~/org/desktop_inbox.org")
 
-  (add-to-list 'org-emphasis-alist
-             '("/" (:foreground "#ff6655" :slant italic)))
-  (add-to-list 'org-emphasis-alist
-             '("*" (:foreground "#282c34" :background "#ECBE7B" :weight bold)))
+  ;; (add-to-list 'org-emphasis-alist
+  ;;            '("/" (:foreground "#ff6655" :slant italic)))
+  ;; (add-to-list 'org-emphasis-alist
+  ;;            '("*" (:foreground "#282c34" :background "#ECBE7B" :weight bold)))
 
-  (setq! org-agenda-files (-concat
-                           '("~/org/next_action.org" "~/org/inbox.org" "~/org/desktop_inbox.org")
-                           (directory-files-recursively "~/org/projects" org-agenda-file-regexp)))
-  (custom-set-faces!
-    '(org-link :weight bold :underline "#51afef" :foreground "brightwhite")
-    '(org-level-1 :height 1.4 :foreground "grey" :weight bold :family "SF Pro")
-    '(org-level-2 :height 1.2 :foreground "grey" :weight bold :family "SF Pro")
-    '(org-level-3 :height 1.1 :foreground "grey" :weight bold :family "SF Pro")
-    '(org-level-4 :height 1.1 :foreground "grey" :weight bold :family "SF Pro")
-    '(org-level-5 :height 1.0 :foreground "grey" :weight bold :family "SF Pro")
-    '(org-level-6 :height 1.0 :foreground "grey" :weight bold :family "SF Pro")
-    '(org-document-title :height 1.5 :foreground "grey" :family "SF Pro")
-    '(org-indent :inherit org-hide)
-    )
+  ;; (setq! org-agenda-files (-concat
+  ;;                          '("~/org/next_action.org" "~/org/inbox.org" "~/org/desktop_inbox.org")
+  ;;                          (directory-files-recursively "~/org/projects" org-agenda-file-regexp)))
+  ;; (custom-set-faces!
+  ;;   '(org-link :weight bold :underline "#51afef" :foreground "white")
+  ;;   '(org-level-1 :height 1.4 :foreground "grey" :weight regular :family "Helvetica Neue")
+  ;;   '(org-level-2 :height 1.2 :foreground "grey" :weight regular :family "Helvetica Neue")
+  ;;   '(org-level-3 :height 1.1 :foreground "grey" :weight regular :family "Helvetica Neue")
+  ;;   '(org-level-4 :height 1.1 :foreground "grey" :weight regular :family "Helvetica Neue")
+  ;;   '(org-level-5 :height 1.0 :foreground "grey" :weight regular :family "Helvetica Neue")
+  ;;   '(org-level-6 :height 1.0 :foreground "grey" :weight regular :family "Helvetica Neue")
+  ;;   '(org-document-title :height 1.5 :foreground "grey" :family "Helvetica Neue")
+  ;;   '(org-indent :inherit org-hide)
+  ;;   )
   (setq org-superstar-headline-bullets-list '(" ")
         org-superstar-item-bullet-alist '((?* . ?⋆)
                                           (?+ . ?‣)
                                           (?- . ?•)))
+
+  ;; Flyspell mode just grinds big Org buffers to a halt for me.
+  (remove-hook! 'org-mode-hook #'(flyspell-mode org-superstar-mode))
+
   )
 (defun no-line-numbers ()
   (setq-local display-line-numbers nil)

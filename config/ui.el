@@ -28,7 +28,7 @@
 
 (when IS-MAC
   (setq doom-font (font-spec :family "Fira Code" :size 14)
-        doom-variable-pitch-font (font-spec :family "Baskerville" :size 14)
+        doom-variable-pitch-font (font-spec :family "Fira Code" :size 14)
         doom-big-font (font-spec :family "Fira Code" :size 20)))
 
 (defun my/org-line-spacing()

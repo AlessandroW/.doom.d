@@ -151,6 +151,32 @@ TODO lists need a different faces than org documents."
       (face-remap-add-relative 'org-level-1 :height 1.0 :weight 'light)
       (face-remap-add-relative 'org-link :height 1.0 :weight 'light)))
 
+
+  ;; BLOG
+  ;; Inspired by https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html
+  (require 'ox-publish)
+  (setq org-publish-project-alist
+        '(("blog-notes"
+           :base-directory "~/org/blog/org"
+           :base-extension "org"
+           :publishing-directory "~/org/blog/public/"
+           :recursive t
+           :publishing-function org-html-publish-to-html
+           :headline-levels 4           ; Just the default for this project.
+           :auto-preamble t
+           :auto-sitemap t       ; Generate sitemap.org automagically...
+           :sitemap-filename "sitemap.org" ; ... call it sitemap.org (it's the default)...
+           :sitemap-title "Sitemap"        ; ... with title 'Sitemap'.
+           )
+
+          ("blog-static"
+           :base-directory "~/org/blog/org/"
+           :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+           :publishing-directory "~/org/blog/public/"
+           :recursive t
+           :publishing-function org-publish-attachment)
+
+          ("blog" :components ("blog-notes" "blog-static"))))
   ;; END OF after! ORG
   )
 

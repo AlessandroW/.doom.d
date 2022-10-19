@@ -6,9 +6,9 @@
                            "~/org/org-roam"))
 (setq org-roam-capture-templates
       '(("d" "default" plain
-         "%?\n* Folgezettel\n\n* Related\n\n* Index\n\n* References"
+         "%?\n* Folgezettel\n\n* Index\n\n* References"
          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-                            "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+filetags:\n\n")
+                            "#+TITLE: ${title}\n#+CREATED: %U\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n#+filetags: \n\n")
          :unnarrowed t)))
 
 (setq org-roam-capture-ref-templates
@@ -23,7 +23,6 @@
          :if-new (file+head "web/${ref}.org" "#+TITLE: ${title}\n")
          :unnarrowed t)
         ))
-
 ;; ORG ROAM UI
 (use-package! websocket
     :after org-roam)

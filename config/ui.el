@@ -30,11 +30,6 @@
           doom-variable-pitch-font (font-spec :family "DejaVu Sans" :style "Regular" :size 16 :weight 'regular)
           doom-big-font (font-spec :family "Fira Code" :size 20))))
 
-    (defvar required-fonts '("Fira Code Nerd Font" "Alegreya" "Overpass Nerd Font"))
-    (setq doom-font (font-spec :family "Fira Code Nerd Font" :size 22 :style "Regular")
-          doom-variable-pitch-font (font-spec :family "Overpass Nerd Font" :size 25 :weight 'regular)
-          doom-big-font (font-spec :family "Fira Code Nerd Font" :size 30))
-
 (defvar mixed-pitch-modes '(org-mode LaTeX-mode markdown-mode gfm-mode Info-mode)
   "Modes that `mixed-pitch-mode' should be enabled in, but only after UI initialisation.")
 (defun init-mixed-pitch-h ()

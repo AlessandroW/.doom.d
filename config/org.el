@@ -2,9 +2,8 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq! org-directory (if (equal machine "workstation")
-                         "~/Private/org/"
-                       "~/org/"))
+(setq! org-directory "~/org/")
+
 (after! evil
 ;; Use emacs keybindings in the org-mode calendar
 ;; https://emacs.stackexchange.com/questions/14115/disable-evil-mode-in-calendar
@@ -89,11 +88,8 @@
         org-superstar-item-bullet-alist '((?* . ?⋆)
                                           (?+ . ?‣)
                                           (?- . ?•)))
-  ;; Ivy-Bibtex
-  (setq! zotero-dir (if (equal machine "workstation") "~/Documents/"
-                      "~/Dokumente/References/"))
   ;; Ivy-Bibtex config
-  (setq! bibtex-completion-bibliography (concat zotero-dir "my_zotero_library.bib")
+  (setq! bibtex-completion-bibliography zotero-dir
          bibtex-completion-pdf-field "file" ; For Zotero, see .bib file
          bibtex-completion-notes-path org-roam-directory ; One org-file for per publications
          bibtex-completion-notes-template-multiple-files

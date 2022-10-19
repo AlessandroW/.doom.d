@@ -1,5 +1,6 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
+(load! "local.el") ;; Defines machine name.
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
 
@@ -128,4 +129,3 @@
     (setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin/"))
     (setq exec-path (append exec-path '("/Library/TeX/texbin/")))))
 
-(load! "local.el") ;; Defines machine name.

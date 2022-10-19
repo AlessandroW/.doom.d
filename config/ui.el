@@ -16,20 +16,6 @@
 ;; Use snipe for horizontal and vertical movement.
 (setq evil-snipe-scope 'whole-visible)
 
-(if (equal machine "workstation")
-    (setq doom-font (font-spec :family "Fira Code" :size 18)
-          doom-variable-pitch-font (font-spec :family "DejaVu Sans" :style "Regular" :size 18 :weight 'regular)
-          doom-big-font (font-spec :family "Fira Code" :size 22))
-  (when (> (display-pixel-height) 1200)
-    (setq doom-font (font-spec :family "Fira Code" :size 22)
-          doom-variable-pitch-font (font-spec :family "DejaVu Sans" :style "Regular" :size 22 :weight 'regular)
-          doom-big-font (font-spec :family "Fira Code" :size 26)))
-
-  (when (< (display-pixel-height) 1200)
-    (setq doom-font (font-spec :family "Fira Code" :size 14)
-          doom-variable-pitch-font (font-spec :family "DejaVu Sans" :style "Regular" :size 16 :weight 'regular)
-          doom-big-font (font-spec :family "Fira Code" :size 20))))
-
 (defvar mixed-pitch-modes '(org-mode LaTeX-mode markdown-mode gfm-mode Info-mode)
   "Modes that `mixed-pitch-mode' should be enabled in, but only after UI initialisation.")
 (defun init-mixed-pitch-h ()

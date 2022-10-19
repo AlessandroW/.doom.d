@@ -1,11 +1,11 @@
 ;;; config/checkers.el -*- lexical-binding: t; -*-
 
-(after! 'ispell
+(after! ispell
   ;; Configure `LANG`, otherwise ispell.el cannot find a 'default
   ;; dictionary' even though multiple dictionaries will be configured
   ;; in next line.
-  (setenv "LANG" "en_US.UTF-8")
-  (setq ispell-program-name "hunspell")
+  ;; (setenv "LANG" "en_US.UTF-8")
+  ;; (setq ispell-program-name "hunspell")
   ;; Configure German, English.
   (setq ispell-dictionary "de_DE,en_US")
   ;; ispell-set-spellchecker-params has to be called
@@ -19,4 +19,9 @@
   ;; The personal dictionary file has to exist, otherwise hunspell will
   ;; silently not use it.
   (unless (file-exists-p ispell-personal-dictionary)
-    (write-region "" nil ispell-personal-dictionary nil 0)))
+    (write-region "" nil ispell-personal-dictionary nil 0))
+
+  ;; Overwrite default key-binding.
+  ;; Otherwise it overwrites my other-window binding.
+  (map! :map flyspell-mode-map "C-;" nil)
+  (map! :map flyspell-mode-map :n "z p" #'flyspell-auto-correct-previous-word))

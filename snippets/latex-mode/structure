@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: structure
+# key: struc
+# --
+\structure{$1} $0

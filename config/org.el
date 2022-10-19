@@ -151,10 +151,39 @@ TODO lists need a different faces than org documents."
       (face-remap-add-relative 'org-level-1 :height 1.0 :weight 'light)
       (face-remap-add-relative 'org-link :height 1.0 :weight 'light)))
 
+(defun ereslibre/is-entry-of-type (type entry)
+  (let ((entry-link (plist-get (car entry) :entry)))
+    (string-match (format "^%s/" type) entry-link)))
+
+(defun ereslibre/sitemap (title list)
+  ;; From https://github.com/ereslibre/ereslibre.es/blob/main/config/default.el
+  (let ((entries (mapconcat (lambda (entry) (car entry))  (cdr list) "\n")))
+    (format "#+TITLE: %s
+#+SUBTITLE: Data Science, Software Development, and Emacs.
+#+SETUPFILE: ~/.doom.d/org-templates/blog-level-0.org
+#+OPTIONS: toc:nil\n
+#+begin_export html
+%s
+#+end_export
+"
+            title entries )))
 
   ;; BLOG
   ;; Inspired by https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html
   (require 'ox-publish)
+  (defun my/org-sitemap-date-entry-format (entry style project)
+    "Format ENTRY in org-publish PROJECT Sitemap format ENTRY ENTRY STYLE format that includes date.
+     © Thomas Ingram, CC-BY-SA 4.0"
+    (let ((filename (org-publish-find-title entry project)))
+      (if (= (length filename) 0)
+          (format "*%s*" entry)
+        ;; BUG it's still .org not .html!
+        ;; Fixed here? https://github.com/ereslibre/ereslibre.es/blob/a717ce71821aa69928034e8517025a26dd582051/config/default.el#L232
+        (format "<p><pre>%s</pre><a href='%s'>%s</a> </p>"
+                (format-time-string "%Y-%m-%d"
+                                    (org-publish-find-date entry project))
+                entry
+                filename))))
   (setq org-publish-project-alist
         '(("blog-notes"
            :base-directory "~/org/blog/org"
@@ -164,9 +193,12 @@ TODO lists need a different faces than org documents."
            :publishing-function org-html-publish-to-html
            :headline-levels 4           ; Just the default for this project.
            :auto-preamble t
-           :auto-sitemap t       ; Generate sitemap.org automagically...
-           :sitemap-filename "sitemap.org" ; ... call it sitemap.org (it's the default)...
-           :sitemap-title "Sitemap"        ; ... with title 'Sitemap'.
+           :auto-sitemap t       ; Generate sitemap automagically... see https://orgmode.org/manual/Site-map.html
+           :sitemap-filename "index.org" ; ... call it index.org (it's the default)...
+           :sitemap-function ereslibre/sitemap
+           :sitemap-title "Alessandro Wollek's Blog"
+           :sitemap-sort-files anti-chronologically
+           :sitemap-format-entry my/org-sitemap-date-entry-format
            )
 
           ("blog-static"

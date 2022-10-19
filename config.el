@@ -4,13 +4,10 @@
 ;; sync' after modifying this file!
 
 
-(load! "config/local.el") ;; Defines machine name.
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
 (setq user-full-name "Alessandro Wollek"
-      user-mail-address (if (equal machine "workstation")
-                            "alessandro.wollek@tum.de"
-                          "a@wollek.dev"))
+      user-mail-address "a@wollek.dev")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -60,7 +57,7 @@
 (map! "<mouse-9>" 'next-buffer )
 
 ;;; :ui
-(map! (:when (featurep! :ui popup)
+(map! (:when (modulep! :ui popup)
        "C-ä"   #'+popup/toggle))
 
 (map! :n "Ü" #'evil-backward-paragraph)
@@ -104,8 +101,8 @@
 
 ;; Projetile
 (after! projectile
-        (setq! projectile-indexing-method 'alien  ;; No projectile post-processing, better for remote work
-               projectile-enable-caching nil))
+  (setq! projectile-indexing-method 'alien ;; No projectile post-processing, better for remote work
+         projectile-enable-caching nil))
 
 
 (after! python
@@ -116,16 +113,6 @@
   )
 
 
-(use-package! org-super-agenda
-  :after org-agenda
-  :init (setq! org-super-agenda-groups '((:name "Home"
-                                                :auto-outline-path t)
-                                         (:name "Test"
-                                                :todo "TODO")
-                                         ))
-  :config (org-super-agenda-mode))
-
-<<<<<<< HEAD
 (after! latex
   ;; Use pdf-tools to open PDF files
   ;; https://emacs.stackexchange.com/a/19475
@@ -135,8 +122,10 @@
   ;; Update PDF buffers after successful LaTeX runs
   (add-hook 'TeX-after-compilation-finished-functions
             #'TeX-revert-document-buffer)
-  )
-;; https://apple.stackexchange.com/a/278069
-(when IS-MAC
-  (setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin/"))
-  (setq exec-path (append exec-path '("/Library/TeX/texbin/"))))
+
+  ;; https://apple.stackexchange.com/a/278069
+  (when IS-MAC
+    (setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin/"))
+    (setq exec-path (append exec-path '("/Library/TeX/texbin/")))))
+
+(load! "local.el") ;; Defines machine name.

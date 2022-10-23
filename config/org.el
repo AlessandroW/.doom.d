@@ -80,7 +80,7 @@
 
     (setq-local default-text-properties
                 '(line-height 1.5
-                              line-spacing 0.1)
+                  line-spacing 0.1)
                 x-underline-at-descent-line t))
   (add-hook 'mixed-pitch-mode-hook 'my/org-line-spacing)
 

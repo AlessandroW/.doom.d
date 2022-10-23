@@ -147,14 +147,36 @@ TODO lists need a different faces than org documents."
       (face-remap-add-relative 'org-level-1 :height 1.0 :weight 'light)
       (face-remap-add-relative 'org-link :height 1.0 :weight 'light)))
 
-(defun ereslibre/is-entry-of-type (type entry)
-  (let ((entry-link (plist-get (car entry) :entry)))
-    (string-match (format "^%s/" type) entry-link)))
+  (defun my/get-abstract (filename)
+    "Returns the abstract chapter if any."
+    (when (file-exists-p filename)
+      (with-temp-buffer
+        (insert-file-contents filename)
+        (goto-char (point-min))
+        (let ((abstract-start (1+ (or
+                                   ;; Look for the first non-keyword line
+                                   (and (re-search-forward "^* Abstract :noexport:$" nil t)
+                                        (match-end 0))
+                                   ;; Failing that, assume we're malformed and
+                                   ;; have no content
+                                   (1- (point-min)))))
+              (abstract-end (1- (or
+                                 (and (re-search-forward "^*" nil t)
+                                      (match-beginning 0))
+                                 (1+ (buffer-size))))))
+          ;; Return a pair of '(needs-more preview-string)
+          (if (not (= abstract-start (point-min)))
+            (buffer-substring abstract-start abstract-end) "")))))
 
-(defun ereslibre/sitemap (title list)
-  ;; From https://github.com/ereslibre/ereslibre.es/blob/main/config/default.el
-  (let ((entries (mapconcat (lambda (entry) (car entry))  (cdr list) "\n")))
-    (format "#+TITLE: %s
+
+  (defun ereslibre/is-entry-of-type (type entry)
+    (let ((entry-link (plist-get (car entry) :entry)))
+      (string-match (format "^%s/" type) entry-link)))
+
+  (defun ereslibre/sitemap (title list)
+    ;; From https://github.com/ereslibre/ereslibre.es/blob/main/config/default.el
+    (let ((entries (mapconcat (lambda (entry) (car entry))  (cdr list) "\n")))
+      (format "#+TITLE: %s
 #+SUBTITLE: Data Science, Software Development, and Emacs.
 #+SETUPFILE: ~/.doom.d/org-templates/blog-level-0.org
 #+OPTIONS: toc:nil\n
@@ -162,7 +184,7 @@ TODO lists need a different faces than org documents."
 %s
 #+end_export
 "
-            title entries )))
+              title entries )))
 
   ;; BLOG
   ;; Inspired by https://orgmode.org/worg/org-tutorials/org-publish-html-tutorial.html
@@ -170,16 +192,18 @@ TODO lists need a different faces than org documents."
   (defun my/org-sitemap-date-entry-format (entry style project)
     "Format ENTRY in org-publish PROJECT Sitemap format ENTRY ENTRY STYLE format that includes date.
      © Thomas Ingram, CC-BY-SA 4.0"
-    (let ((filename (org-publish-find-title entry project)))
-      (if (= (length filename) 0)
+    (let ((title (org-publish-find-title entry project)))
+      (if (= (length title) 0)
           (format "*%s*" entry)
-        ;; BUG it's still .org not .html!
         ;; Fixed here? https://github.com/ereslibre/ereslibre.es/blob/a717ce71821aa69928034e8517025a26dd582051/config/default.el#L232
-        (format "<p><pre>%s</pre><a href='%s'>%s</a> </p>"
+        (format "<a href='%s'><h2 class='sitemap-heading'><span class='prefix-date'>%s</span>%s</h2><p>%s</p></a>"
+                ;; HACK stupidly replace .org with .html.
+                (string-replace ".org" ".html" entry)
                 (format-time-string "%Y-%m-%d"
                                     (org-publish-find-date entry project))
-                entry
-                filename))))
+                title
+                (my/get-abstract (org-publish--expand-file-name entry project))
+                ))))
   (setq org-publish-project-alist
         '(("blog-notes"
            :base-directory "~/org/blog/org"
@@ -189,7 +213,7 @@ TODO lists need a different faces than org documents."
            :publishing-function org-html-publish-to-html
            :headline-levels 4           ; Just the default for this project.
            :auto-preamble t
-           :auto-sitemap t       ; Generate sitemap automagically... see https://orgmode.org/manual/Site-map.html
+           :auto-sitemap t ; Generate sitemap automagically... see https://orgmode.org/manual/Site-map.html
            :sitemap-filename "index.org" ; ... call it index.org (it's the default)...
            :sitemap-function ereslibre/sitemap
            :sitemap-title "Alessandro Wollek's Blog"

@@ -5,6 +5,8 @@
 ;; `load-theme' function. This is the default:
 (setq doom-theme 'doom-one)
 
+(defvar required-fonts '("Fira Code Nerd Font" "Alegreya" "Overpass Nerd Font"))
+
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
@@ -69,3 +71,9 @@ Also immediately enables `mixed-pitch-modes' if currently in one of the modes."
                                              ", "))
                          (sleep-for 0.5))))))
   ";; No missing fonts detected")
+
+(map! (:when (modulep! :ui popup)
+       "C-ä"   #'+popup/toggle))
+
+(map! :n "Ü" #'evil-backward-paragraph)
+(map! :n "*" #'evil-forward-paragraph)

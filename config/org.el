@@ -168,12 +168,7 @@ TODO lists need a different faces than org documents."
           (if (not (= abstract-start (point-min)))
             (buffer-substring abstract-start abstract-end) "")))))
 
-
-  (defun ereslibre/is-entry-of-type (type entry)
-    (let ((entry-link (plist-get (car entry) :entry)))
-      (string-match (format "^%s/" type) entry-link)))
-
-  (defun ereslibre/sitemap (title list)
+  (defun my/org-sitemap (title list)
     ;; From https://github.com/ereslibre/ereslibre.es/blob/main/config/default.el
     (let ((entries (mapconcat (lambda (entry) (car entry))  (cdr list) "\n")))
       (format "#+TITLE: %s
@@ -212,13 +207,13 @@ TODO lists need a different faces than org documents."
            :recursive t
            :publishing-function org-html-publish-to-html
            :headline-levels 4           ; Just the default for this project.
-           :auto-preamble t
            :auto-sitemap t ; Generate sitemap automagically... see https://orgmode.org/manual/Site-map.html
            :sitemap-filename "index.org" ; ... call it index.org (it's the default)...
-           :sitemap-function ereslibre/sitemap
+           :sitemap-function my/org-sitemap
            :sitemap-title "Alessandro Wollek's Blog"
            :sitemap-sort-files anti-chronologically
            :sitemap-format-entry my/org-sitemap-date-entry-format
+           :html-preamble "<nav><a href='index.html' class='blog-name'><b>Alessandro Wolleks’s Blog</a><a href='https://www.linkedin.com/in/alessandro-w-73a27213a/'>About</a><a href='mailto:hi@wollek.dev'>Contact</a></nav>"
            )
 
           ("blog-static"

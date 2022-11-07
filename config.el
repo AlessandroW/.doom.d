@@ -84,3 +84,9 @@
     (setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin/"))
     (setq exec-path (append exec-path '("/Library/TeX/texbin/")))))
 
+
+(defun open-kitty ()
+  "Open a new kitty instance."
+  (interactive)
+  (call-process "kitty" nil 0 nil))
+(map! :leader :n "k"  #'open-kitty)

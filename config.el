@@ -30,7 +30,9 @@
 (map! "C-x r M-c" #'copy-rectangle-to-system-clipboard)
 
 (after! tramp
-  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+  ;; (add-to-list 'tramp-remote-path '~/.local/bin)
+  )
 
 (after! lsp-mode
   ;; Ignore these directories

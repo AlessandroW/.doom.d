@@ -54,7 +54,6 @@
                     :major-modes '(c++-mode)
                     :remote? t
                     :server-id 'clangd-remote))
-
   )
 
 ;; Projetile
@@ -92,3 +91,7 @@
   (interactive)
   (call-process "kitty" nil 0 nil))
 (map! :leader :n "k"  #'open-kitty)
+
+(after! leetcode
+  (setq! leetcode-save-solutions t
+         leetcode-directory "~/leetcode"))

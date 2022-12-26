@@ -70,3 +70,5 @@
            :repo "nobiot/org-transclusion"
            :branch "main"
            :files ("*.el")))
+
+(package! leetcode :recipe (:host github :repo "kaiwk/leetcode.el") :pin "682f7a44d0bea0daf6f9a2888fa7f905d3a0cd70")

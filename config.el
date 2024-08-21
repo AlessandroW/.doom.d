@@ -76,11 +76,11 @@
                my/previous-frame-width (frame-width)
                my/previous-frame-height (frame-height))
         (set-frame-size (selected-frame) 1953 1080 t) ;; +33 px for the macOS bar
-        (keycast-header-line-mode))
+        (keycast-header-line-mode 1))
     (progn
       (setq! org-directory my/org-directory
              org-roam-directory my/org-roam-directory)
       (set-frame-size (selected-frame)
                       my/previous-frame-width
                       my/previous-frame-height)
-      (keycast-header-line-mode))))
+      (keycast-header-line-mode -1))))

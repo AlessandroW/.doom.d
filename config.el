@@ -1,6 +1,6 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 (setq user-full-name "Alessandro Wollek"
-      user-mail-address "concat@wollek.ai")
+      user-mail-address "contact@wollek.ai")
 
 (load! "local.el") ;; Machine-specific settings.
 (load! "config/org.el")

@@ -5,7 +5,6 @@
   ;; https://emacs.stackexchange.com/questions/14115/disable-evil-mode-in-calendar
   (evil-set-initial-state 'calendar-mode 'emacs))
 
-
 (after! org
   (setq! org-clock-persist 'history
          org-startup-with-inline-images t
@@ -15,7 +14,21 @@
          ;; Prettier lists
          org-superstar-item-bullet-alist '((?* . ?⋆)
                                            (?+ . ?‣)
-                                           (?- . ?•)))
+                                           (?- . ?•))
+
+         ;; Org-Ref Ivy-Bibtex config
+         zotero-dir my/zotero-dir
+         bibtex-completion-bibliography zotero-dir
+         bibtex-completion-pdf-field "file" ; For Zotero, see .bib file
+         bibtex-completion-notes-path org-roam-directory ; One org-file for per publications
+         bibtex-completion-notes-template-multiple-files
+         (concat
+          "${title}\n"
+          "* TODO Notes\n"
+          ":PROPERTIES:\n"
+          ":NOTER_DOCUMENT: ${file}\n"
+          ":END:\n\n"
+          ))
   ;; Org Mode Clock Persistent
   (org-clock-persistence-insinuate)
 

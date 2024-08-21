@@ -1,8 +1,10 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-(setq user-full-name "Alessandro Wollek"
-      user-mail-address "contact@wollek.ai")
-
 (load! "local.el") ;; Machine-specific settings.
+
+(setq user-full-name "Alessandro Wollek"
+      user-mail-address "contact@wollek.ai"
+      org-directory my/org-directory)
+
 (load! "config/org.el")
 (load! "config/org-roam.el")
 
@@ -53,6 +55,15 @@
       :desc "Insert today's date as Y-m-d"
       "i d" #'my/insert-todays-date)
 
+(defun my/switch-meta ()
+  "Switch meta option key.
+BUG: External keyboard meta is right by default."
+  (interactive)
+  (if (equal mac-option-modifier 'none)
+      (setq! mac-option-modifier 'meta
+            mac-right-option-modifier 'none)
+    (setq! mac-option-modifier 'none
+          mac-right-option-modifier 'meta)))
 
 (use-package! elaiza
   :config

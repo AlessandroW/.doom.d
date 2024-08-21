@@ -1,97 +1,86 @@
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-
-(load! "local.el") ;; Machine specific settings.
 (setq user-full-name "Alessandro Wollek"
-      user-mail-address "a@wollek.dev")
+      user-mail-address "concat@wollek.ai")
 
-
+(load! "local.el") ;; Machine-specific settings.
 (load! "config/org.el")
 (load! "config/org-roam.el")
-(load! "config/ui.el")
-(load! "config/checkers.el")
-(load! "config/tools.el")
-(load! "config/completion.el")
 
-(map! "C-x C-b" 'ivy-switch-buffer ) ;; Don't open the buffer menu when pressing Ctrl for too long.
-(map! "C-ö" #'other-window
-      "C-;" #'other-window)
-;; Use the mouse to go to the previous and next buffer.
-(map! "<mouse-8>" 'previous-buffer )
-(map! "<mouse-9>" 'next-buffer )
+;; UI and Window Management
+(desktop-save-mode 1)
+(setq! doom-theme 'doom-one
+       doom-font (font-spec :family "Fira Code" :size 14)
+       doom-variable-pitch-font (font-spec :family "Fira Code" :size 14)
+       ;; Big font for recording
+       doom-big-font (font-spec :family "Fira Code" :size 24)
+       display-line-numbers-type t
+       evil-split-window-below t
+       evil-vsplit-window-right t)
 
-(defun copy-rectangle-to-system-clipboard (start end)
-  "Like `copy-rectangle-as-kill', but also copy to system clipboard."
-  (interactive "r")
-  (call-interactively #'copy-rectangle-as-kill)
-  (with-temp-buffer
-    (yank-rectangle)
-    (delete-trailing-whitespace)
-    (funcall interprogram-cut-function (buffer-string))))
-(map! "C-x r M-c" #'copy-rectangle-to-system-clipboard)
+(after! idle-highlight-mode ;; From https://github.com/TheJJ/conffiles/blob/6f15b4881ef3422980b9d146f708269de8fd8fa9/.doom.d/visual.el#L3
+  (setq idle-highlight-idle-time 0.2
+        idle-highlight-visible-buffers t))
 
-(after! tramp
-  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
-  ;; (add-to-list 'tramp-remote-path '~/.local/bin)
-  )
+(after! jit-lock-mode ;; From https://github.com/TheJJ/conffiles/blob/6f15b4881ef3422980b9d146f708269de8fd8fa9/.doom.d/visual.el#L10
+  (setq jit-lock-stealth-time 0.3   ;; fontify unfontified areas when idle for this time
+        jit-lock-stealth-nice 0.3   ;; time between fontifying chunks
+        jit-lock-chunk-size 4096))  ;; number of characters to fontify at once
 
-(after! lsp-mode
-  ;; Ignore these directories
-  ;; See https://github.com/emacs-lsp/lsp-mode/issues/1085
-  (dolist (dir '(
-                 "[/\\\\]env"
-                 "[/\\\\]venv"
-                 "[/\\\\]build"
-                 "[/\\\\]node_modules"
-                 ))
-    (push dir lsp-file-watch-ignored))
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-tramp-connection "pylsp")
-                    :major-modes '(python-mode)
-                    :remote? t
-                    :server-id 'pylsp-remote))
-  (lsp-register-client
-   (make-lsp-client :new-connection (lsp-tramp-connection "clangd-15")
-                    :major-modes '(c++-mode)
-                    :remote? t
-                    :server-id 'clangd-remote))
-  )
+(defun my/highlight-occurrences ()
+  "Highlight occurrences of word under cursor."
+  (idle-highlight-mode t))
 
-;; Projetile
-(after! projectile
-  (setq! projectile-indexing-method 'alien ;; No projectile post-processing, better for remote work
-         projectile-enable-caching nil))
+(setq! ;; Use snipe for horizontal and vertical movement.
+       evil-snipe-scope 'whole-visible)
+
+;; HOOCKS
+(add-hook 'prog-mode-hook 'my/highlight-occurrences)
 
 
-(after! python
-  (add-hook! 'python-mode-hook #'origami-mode)
-  (map! :n "z c" #'origami-toggle-node)
-  (map! :n "z o" #'origami-toggle-node)
-  (map! :n "z m" #'origami-toggle-all-nodes)
-  )
-
-
-(after! latex
-  ;; Use pdf-tools to open PDF files
-  ;; https://emacs.stackexchange.com/a/19475
-  (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
-        TeX-source-correlate-start-server t)
-
-  ;; Update PDF buffers after successful LaTeX runs
-  (add-hook 'TeX-after-compilation-finished-functions
-            #'TeX-revert-document-buffer)
-
-  ;; https://apple.stackexchange.com/a/278069
-  (when IS-MAC
-    (setenv "PATH" (concat (getenv "PATH") ":/Library/TeX/texbin/"))
-    (setq exec-path (append exec-path '("/Library/TeX/texbin/")))))
-
-
-(defun open-kitty ()
-  "Open a new kitty instance."
+;; Custom functions
+(defun my/insert-todays-date ()
+  "Inserts today's date in the ISO 8601 format YEAR-MONTH-DAY."
   (interactive)
-  (call-process "kitty" nil 0 nil))
-(map! :leader :n "k"  #'open-kitty)
+  (insert (format-time-string "%Y-%m-%d")))
 
-(after! leetcode
-  (setq! leetcode-save-solutions t
-         leetcode-directory "~/leetcode"))
+;; Keybindings
+(map! "C-x C-b" #'consult-buffer  ;; don't open the buffer menu when pressing ctrl for too long.
+      "C-;" #'other-window
+      ;; use the mouse to go to the previous and next buffer.
+      "<mouse-4>" #'previous-buffer
+      "<mouse-5>" #'next-buffer)
+(map! :leader
+      :desc "Insert today's date as Y-m-d"
+      "i d" #'my/insert-todays-date)
+
+
+(use-package! elaiza
+  :config
+  (setq! elaiza-default-model (make-elaiza-gpt-4o-mini)
+         elaiza-debug t))
+
+;; YOUTUBE
+(define-minor-mode youtube-mode
+  "A minor mode for configuring YouTube related settings."
+  :global t
+  :init-value nil
+  :lighter " YouTube"
+  :group 'convenience
+  :keymap (let ((map (make-sparse-keymap)))
+            ;; You can define key bindings here if needed
+            map)
+  (if youtube-mode
+      (progn
+        (setq! org-directory my/public-org-directory
+               org-roam-directory org-directory
+               my/previous-frame-width (frame-width)
+               my/previous-frame-height (frame-height))
+        (set-frame-size (selected-frame) 1953 1080 t) ;; +33 px for the macOS bar
+        (keycast-header-line-mode))
+    (progn
+      (setq! org-directory my/org-directory
+             org-roam-directory my/org-roam-directory)
+      (set-frame-size (selected-frame)
+                      my/previous-frame-width
+                      my/previous-frame-height)
+      (keycast-header-line-mode))))

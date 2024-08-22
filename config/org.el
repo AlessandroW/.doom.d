@@ -149,8 +149,8 @@ will be taken."
 (use-package! olivetti
   :after org
   :config
-  (setq olivetti-min-body-width 50
-        olivetti-body-width 100
-        olivetti-style t ; fantastic new layout
-        olivetti-margin-width 12)
+  (setq! olivetti-min-body-width 50
+         olivetti-body-width 120
+         olivetti-style t ; fantastic new layout
+         olivetti-margin-width 12)
   :hook (org-mode . olivetti-mode))

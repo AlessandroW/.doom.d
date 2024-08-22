@@ -95,3 +95,8 @@ BUG: External keyboard meta is right by default."
                       my/previous-frame-width
                       my/previous-frame-height)
       (keycast-header-line-mode -1))))
+
+;; Flutter
+(after! flutter
+  ;; Open Flutter as popup.
+  (set-popup-rule! "^\\*Flutter\\*"))

@@ -32,11 +32,33 @@
   "Highlight occurrences of word under cursor."
   (idle-highlight-mode t))
 
+(defun my/whitespace-highlight ()
+  "Originally from github.com/thejj/conffiles and doom/lisp.doom-ui.el"
+  (unless (or (eq major-mode 'fundamental-mode)
+              (eq major-mode 'org-mode)
+              (null buffer-file-name))
+    (require 'whitespace)
+    (setq-local whitespace-style
+                '(face indentation tabs tab-mark spaces space-mark newline newline-mark trailing)
+                whitespace-display-mappings
+                '((tab-mark ?\t [?› ?\t])
+                  (newline-mark ?\n [?¬ ?\n])
+                  (space-mark ?\  [?·] [?.])))
+    (whitespace-mode +1)))
+
+(defun my/remove-doom-whitespace-highlight ()
+  "Remove dooms default highlight "
+  (message "removed hook!")
+  (remove-hook 'after-change-major-mode-hook #'doom-highlight-non-default-indentation-h))
+
 (setq! ;; Use snipe for horizontal and vertical movement.
        evil-snipe-scope 'whole-visible)
 
 ;; HOOCKS
-(add-hook 'prog-mode-hook 'my/highlight-occurrences)
+(add-hook 'prog-mode-hook #'my/highlight-occurrences)
+;; Run after doom-init-ui-h that sets the doom-highlight-non-default-indentation-h
+(add-hook 'window-setup-hook #'my/remove-doom-whitespace-highlight -99)
+(add-hook 'after-change-major-mode-hook #'my/whitespace-highlight)
 
 
 ;; Custom functions

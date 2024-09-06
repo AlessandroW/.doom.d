@@ -13,3 +13,5 @@
 (package! olivetti)
 ;; Show others what I type
 (package! keycast)
+;; What are the Info keybindings again?
+(use-package! casual-info :defer t)

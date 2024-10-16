@@ -136,8 +136,10 @@ will be taken."
   ;; KEYBINDINGS
   (map! :leader
         :mode org-mode
-        "m I" #'my/org-copy-hierarchical-idlink-to-clipboard
-        "C-;" #'other-window))
+        "m I" #'my/org-copy-hierarchical-idlink-to-clipboard)
+  (map! :mode org-mode
+        "C-;" #'other-window
+        "C-c c" #'org-ref-insert-cite-link))
 
 ;; Hide emphasis markers
 (use-package! org-appear

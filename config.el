@@ -10,6 +10,7 @@
 
 ;; UI and Window Management
 (desktop-save-mode 1)
+
 (setq! doom-theme 'doom-one
        doom-font (font-spec :family "Fira Code" :size 14)
        doom-variable-pitch-font (font-spec :family "Fira Code" :size 14)
@@ -17,7 +18,9 @@
        doom-big-font (font-spec :family "Fira Code" :size 24)
        display-line-numbers-type t
        evil-split-window-below t
-       evil-vsplit-window-right t)
+       evil-vsplit-window-right t
+       ;; no buffer<2> anymore
+       uniquify-buffer-name-style 'forward)
 
 (after! idle-highlight-mode ;; From https://github.com/TheJJ/conffiles/blob/6f15b4881ef3422980b9d146f708269de8fd8fa9/.doom.d/visual.el#L3
   (setq idle-highlight-idle-time 0.2

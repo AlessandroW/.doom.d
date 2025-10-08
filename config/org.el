@@ -9,6 +9,9 @@
   (setq! org-clock-persist 'history
          org-startup-with-inline-images t
          org-startup-with-latex-preview nil
+         ; Replace .attach for orgro compatibility
+         ; see: https://github.com/amake/orgro/issues/140#issuecomment-2692950077
+         org-attach-id-dir (expand-file-name "data/" org-directory)
          ;; Hide those org heading bullets
          org-superstar-headline-bullets-list '(" ")
          ;; Prettier lists

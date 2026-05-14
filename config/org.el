@@ -90,10 +90,10 @@ the following link to the killring:
         (progn
           (let* ((my-id (funcall 'org-id-get-create))
                  (my-headings (org-get-outline-path t t))
-                 (my-file (buffer-file-name (buffer-base-buffer))))
-            (setq my-link (format "[[id:%s][%s%s]]" my-id
+                 (my-file (buffer-file-name (buffer-base-buffer)))
+                 (my-link (format "[[id:%s][%s%s]]" my-id
                                   (if my-file (concat (file-name-nondirectory my-file) " > "))
-                                  (mapconcat #'identity my-headings " > ")))
+                                  (mapconcat #'identity my-headings " > "))))
             (kill-new my-link)
             (message "Copied %s to killring (clipboard)" my-link)))))
 
@@ -160,7 +160,7 @@ function doesn't move point."
       (when (zerop (org-back-over-empty-lines)) (insert "\n"))
       (insert "[fn:" label "] \n")
       (line-beginning-position 0))))
-  ;; HOOCKS
+  ;; HOOKS
   (add-hook 'org-mode-hook #'my/org-line-spacing)
   (add-hook 'org-insert-heading-hook #'my/org-set-creation-date-heading-property)
   (add-hook 'org-mode-hook #'my/no-line-numbers)

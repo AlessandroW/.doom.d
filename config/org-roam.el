@@ -17,7 +17,7 @@
                                "#+TITLE: ${title}\n#+CREATED: %u\n#+LAST_MODIFIED: %U\n#+setupfile:~/org/org-roam/hugo_setup.org\n# Local Variables:\n# org-attach-id-dir: \"../../data\"\n# End:\n#+filetags:\n\n")
             :roam_refs "${ref}"
             :unnarrowed t)
-           ("t" "ref" plain
+           ("t" "ref (title as filename)" plain
             "%?"
             :if-new (file+head "web/${ref}.org" "#+TITLE: ${title}\n")
             :unnarrowed t))

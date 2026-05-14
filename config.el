@@ -85,7 +85,7 @@ throws an error."
      (persp-frame-switch name))
    (equal (+workspace-current-name) name))))
 
-;; HOOCKS
+;; HOOKS
 (add-hook 'prog-mode-hook #'my/highlight-occurrences)
 ;; Run after doom-init-ui-h that sets the doom-highlight-non-default-indentation-h
 (add-hook 'window-setup-hook #'my/remove-doom-whitespace-highlight -99)

@@ -36,7 +36,7 @@
 (package! olivetti)
 ;; Show others what I type
 (package! keycast)
-;; Grammar cehck
+;; Grammar check
 ;; (package! languagetool)
 (package! casual-suite)
 ;; https://github.com/jdtsmith/eglot-booster

@@ -216,10 +216,10 @@ BUG: External keyboard meta is right by default."
   (+tramp--memoize (or dir default-directory)
                    'my/tramp--projectile-root-cache fn dir))
 
-(defadvice! my/projectile-native-on-remote-a (fn directory)
+(defadvice! my/projectile-alien-on-remote-a (fn directory)
   :around #'projectile-dir-files
   (let ((projectile-indexing-method
-         (if (file-remote-p directory) 'native projectile-indexing-method)))
+         (if (file-remote-p directory) 'alien projectile-indexing-method)))
     (funcall fn directory)))
 
 (add-hook! 'tramp-cleanup-connection-hook

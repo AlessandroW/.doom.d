@@ -7,6 +7,8 @@
 
 (after! org
   (setq! org-clock-persist 'history
+         org-footnote-section "References"
+         org-footnote-auto-adjust nil ;; doesn't work
          org-startup-with-inline-images t
          org-startup-with-latex-preview nil
          ; Replace .attach for orgro compatibility
@@ -21,6 +23,9 @@
 
          ;; Org-Ref Ivy-Bibtex config
          zotero-dir my/zotero-dir
+         org-link-frame-setup
+         '((vm . vm-visit-folder-other-frame)
+           (vm-imap . vm-visit-imap-folder-other-frame) (gnus . org-gnus-no-new-news))
          bibtex-completion-bibliography zotero-dir
          bibtex-completion-pdf-field "file" ; For Zotero, see .bib file
          bibtex-completion-notes-path org-roam-directory ; One org-file for per publications
@@ -38,13 +43,15 @@
   ;; Different font sizes for each heading.
   (custom-set-faces!
     `(org-link :weight medium :underline ,(face-foreground 'link) :foreground ,(face-foreground 'default))
-    '(org-level-1 :height 1.4)
+    '(org-level-1 :height 1.3)
     '(org-level-2 :height 1.2)
     '(org-level-3 :height 1.1)
     '(org-level-4 :height 1.1)
     '(org-level-5 :height 1.0)
     '(org-level-6 :height 1.0)
-    `(org-document-title :height 1.5 :foreground ,(face-foreground 'default))
+    '(org-level-7 :height 1.0)
+    '(org-level-8 :height 1.0)
+    `(org-document-title :height 1.4 :foreground ,(face-foreground 'default))
     '(org-indent :inherit org-hide))
 
   (defun my/org-copy-hierarchical-idlink-to-clipboard ()
@@ -130,11 +137,36 @@ will be taken."
                   line-spacing 0.1)
                 x-underline-at-descent-line t))
 
+  ;; Ignoring local variables, circumvents bug
+  (defun org-footnote-create-definition (label)
+  "Start the definition of a footnote with label LABEL.
+Return buffer position at the beginning of the definition.  This
+function doesn't move point."
+  (let ((label (org-footnote-normalize-label label))
+	electric-indent-mode)		; Prevent wrong indentation.
+    ;; (org-preserve-local-variables
+     (org-with-wide-buffer
+      (cond
+       ((not org-footnote-section) (org-footnote--goto-local-insertion-point))
+       ((save-excursion
+	  (goto-char (point-min))
+	  (re-search-forward
+	   (concat "^\\*+[ \t]+" (regexp-quote org-footnote-section) "[ \t]*$")
+	   nil t))
+	(goto-char (match-end 0))
+        (org-end-of-meta-data t)
+	(unless (bolp) (insert "\n")))
+       (t (org-footnote--clear-footnote-section)))
+      (when (zerop (org-back-over-empty-lines)) (insert "\n"))
+      (insert "[fn:" label "] \n")
+      (line-beginning-position 0))))
   ;; HOOCKS
   (add-hook 'org-mode-hook #'my/org-line-spacing)
   (add-hook 'org-insert-heading-hook #'my/org-set-creation-date-heading-property)
   (add-hook 'org-mode-hook #'my/no-line-numbers)
   (add-hook 'before-save-hook #'my/org-update-last-modified)
+
+
 
   ;; KEYBINDINGS
   (map! :leader
@@ -142,7 +174,8 @@ will be taken."
         "m I" #'my/org-copy-hierarchical-idlink-to-clipboard)
   (map! :mode org-mode
         "C-;" #'other-window
-        "C-c c" #'org-ref-insert-cite-link))
+        "C-c c" #'org-ref-insert-cite-link
+        "C-c f" #'org-footnote-new))
 
 ;; Hide emphasis markers
 (use-package! org-appear

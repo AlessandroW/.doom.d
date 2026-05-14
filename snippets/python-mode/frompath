@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: Path import
+# uuid:
+# key: frompa
+# condition: t
+# --
+from pathlib import Path

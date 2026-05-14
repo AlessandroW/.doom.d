@@ -2,5 +2,4 @@
 # name: pdb breakpoint
 # key: pdb
 # --
-import pdb; pdb.set_trace()
-$0
+import pdb; pdb.set_trace()$0

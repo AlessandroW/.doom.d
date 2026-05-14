@@ -208,3 +208,20 @@ BUG: External keyboard meta is right by default."
   (connection-local-set-profiles
    '(:application tramp :protocol "ssh")
    'remote-direct-async-process))
+
+;; Projectile + TRAMP
+(defvar my/tramp--projectile-root-cache nil)
+(defadvice! my/tramp--memoized-projectile-root-a (fn &optional dir)
+  :around #'projectile-project-root
+  (+tramp--memoize (or dir default-directory)
+                   'my/tramp--projectile-root-cache fn dir))
+
+(defadvice! my/projectile-native-on-remote-a (fn directory)
+  :around #'projectile-dir-files
+  (let ((projectile-indexing-method
+         (if (file-remote-p directory) 'native projectile-indexing-method)))
+    (funcall fn directory)))
+
+(add-hook! 'tramp-cleanup-connection-hook
+  (defun my/tramp-clear-projectile-cache-h ()
+    (setq my/tramp--projectile-root-cache nil)))

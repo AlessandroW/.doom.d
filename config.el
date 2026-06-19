@@ -210,18 +210,21 @@ BUG: External keyboard meta is right by default."
    'remote-direct-async-process))
 
 ;; Projectile + TRAMP
-(defvar my/tramp--projectile-root-cache nil)
-(defadvice! my/tramp--memoized-projectile-root-a (fn &optional dir)
-  :around #'projectile-project-root
-  (+tramp--memoize (or dir default-directory)
-                   'my/tramp--projectile-root-cache fn dir))
+(after! projectile
+  ;; Keep Doom's pinned Projectile. Unpinning currently breaks Doom's advice for
+  ;; `projectile-get-ext-command' because newer Projectile added an extra arg.
+  ;;
+  ;; Over TRAMP, avoid Projectile's submodule scan. Doom's own advice restores
+  ;; the initial value when this is nil, so use a harmless command instead.
+  (setq projectile-git-submodule-command "true")
 
-(defadvice! my/projectile-alien-on-remote-a (fn directory)
-  :around #'projectile-dir-files
-  (let ((projectile-indexing-method
-         (if (file-remote-p directory) 'alien projectile-indexing-method)))
-    (funcall fn directory)))
+  (defvar my/tramp--projectile-root-cache nil)
 
-(add-hook! 'tramp-cleanup-connection-hook
-  (defun my/tramp-clear-projectile-cache-h ()
-    (setq my/tramp--projectile-root-cache nil)))
+  (defadvice! my/tramp--memoized-projectile-root-a (fn &optional dir)
+    :around #'projectile-project-root
+    (+tramp--memoize (or dir default-directory)
+                     'my/tramp--projectile-root-cache fn dir))
+
+  (add-hook! 'tramp-cleanup-connection-hook
+    (defun my/tramp-clear-projectile-cache-h ()
+      (setq my/tramp--projectile-root-cache nil))))

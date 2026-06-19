@@ -16,6 +16,19 @@
       (face-background 'mode-line nil t)
       (face-background 'default nil t)))
 
+(defun my/pretty-reading-buffer-p ()
+  "Return non-nil when the current buffer should use pretty reading polish."
+  (derived-mode-p 'org-mode 'markdown-mode 'gfm-mode 'markdown-view-mode))
+
+(defun my/pretty-reading--refresh-layout (&optional buffer)
+  "Refresh reading layout for BUFFER after window/mode toggles settle."
+  (when (buffer-live-p (or buffer (current-buffer)))
+    (with-current-buffer (or buffer (current-buffer))
+      (when (and (my/pretty-reading-buffer-p)
+                 (bound-and-true-p olivetti-mode)
+                 (fboundp 'olivetti-set-width))
+        (olivetti-set-width olivetti-body-width)))))
+
 (defun my/pretty-reading-setup ()
   "Enable the shared pretty reading stack in the current buffer."
   (setq-local display-line-numbers nil
@@ -28,7 +41,11 @@
   (when (fboundp 'olivetti-mode)
     (olivetti-mode 1))
   (when (fboundp 'valign-mode)
-    (valign-mode 1)))
+    (valign-mode 1))
+  ;; Some modes/window changes compute margins before the window has settled.
+  ;; Refresh once on the next tick; this mirrors the "toggle writeroom fixes it"
+  ;; effect without letting writeroom own the buffer font.
+  (run-at-time 0 nil #'my/pretty-reading--refresh-layout (current-buffer)))
 
 (defun my/pretty-reading-toggle-width ()
   "Toggle the current reading buffer between default and wide body widths."
@@ -139,7 +156,17 @@
       '(markdown-link-face :inherit link :weight normal)))
 
   (add-hook 'markdown-mode-hook #'my/pretty-reading-setup)
-  (add-hook 'gfm-mode-hook #'my/pretty-reading-setup))
+  (add-hook 'gfm-mode-hook #'my/pretty-reading-setup)
+  (add-hook 'markdown-view-mode-hook #'my/pretty-reading-setup))
+
+(after! writeroom-mode
+  ;; Doom's writeroom toggles `mixed-pitch-mode' as a local effect. Since our
+  ;; reading buffers are always pretty, turning writeroom off should not leave
+  ;; them in fixed-pitch. Re-apply the stack after writeroom has restored state.
+  (add-hook 'writeroom-mode-disable-hook
+            (defun my/pretty-reading-after-writeroom-disable-h ()
+              (when (my/pretty-reading-buffer-p)
+                (run-at-time 0 nil #'my/pretty-reading-setup)))))
 
 (map! :leader
       :desc "Toggle reading width"

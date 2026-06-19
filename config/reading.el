@@ -104,8 +104,10 @@
   (setq! org-hide-emphasis-markers t
          org-hidden-keywords '(title)
          org-pretty-entities t
-         org-hide-leading-stars t
-         org-startup-indented t
+         org-hide-leading-stars nil
+         org-startup-indented nil
+         org-fontify-quote-and-verse-blocks t
+         org-fontify-whole-block-delimiter-line nil
          org-startup-with-inline-images t
          ;; Headings should read like document headings, not outline bullets.
          org-superstar-headline-bullets-list '(" "))
@@ -125,9 +127,11 @@
       `(org-link :inherit link :weight normal :underline ,(face-foreground 'link nil t))
 
       ;; Keep source/structure editable, but quiet.
-      `(org-block :inherit fixed-pitch :background ,block-bg :extend t)
-      `(org-block-begin-line :inherit (fixed-pitch shadow) :height 0.85 :background ,block-bg :extend t)
-      `(org-block-end-line :inherit (fixed-pitch shadow) :height 0.85 :background ,block-bg :extend t)
+      `(org-block :inherit fixed-pitch :background ,block-bg :extend nil)
+      `(org-quote :inherit variable-pitch :slant italic :background ,block-bg :extend nil)
+      `(org-verse :inherit variable-pitch :background ,block-bg :extend nil)
+      `(org-block-begin-line :inherit (fixed-pitch shadow) :height 0.85 :background unspecified :extend nil)
+      `(org-block-end-line :inherit (fixed-pitch shadow) :height 0.85 :background unspecified :extend nil)
       '(org-code :inherit (fixed-pitch org-code))
       '(org-verbatim :inherit (fixed-pitch org-verbatim))
       '(org-table :inherit fixed-pitch)
@@ -148,8 +152,11 @@
            org-modern-hide-stars t
            org-modern-list '((?+ . "•") (?- . "•") (?* . "•"))
            org-modern-checkbox '((?X . "☑") (?- . "◩") (?\s . "☐"))
+           org-modern-block-name t
            org-modern-block-fringe nil
-           org-modern-table nil
+           org-modern-table t
+           org-modern-table-vertical 2
+           org-modern-table-horizontal 0.15
            org-modern-tag t
            org-modern-todo t))
 
@@ -203,6 +210,22 @@
             "Apply pretty reading to buffers that entered a reading mode early."
             (when (my/pretty-reading-buffer-p)
               (my/pretty-reading-setup))))
+
+(use-package! markdown-xwidget
+  :after markdown-mode
+  :commands markdown-xwidget-preview-mode
+  :config
+  (setq markdown-xwidget-command
+        "pandoc -f gfm+tex_math_dollars+tex_math_single_backslash -t html --mathjax"
+        markdown-xwidget-github-theme "light"
+        markdown-xwidget-code-block-theme "github"
+        markdown-xwidget-mermaid-theme "default")
+  (map! :map markdown-mode-command-map
+        :desc "Markdown xwidget preview"
+        "x" #'markdown-xwidget-preview-mode)
+  (map! :leader
+        :desc "Markdown xwidget preview"
+        "m x" #'markdown-xwidget-preview-mode))
 
 (after! writeroom-mode
   ;; Doom's writeroom toggles `mixed-pitch-mode' as a local effect. Since our

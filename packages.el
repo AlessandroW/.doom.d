@@ -35,6 +35,10 @@
 ;; Pretty reading stack for org/markdown
 (package! org-modern)
 (package! valign)
+(package! markdown-xwidget
+  :recipe (:host github
+           :repo "cfclrk/markdown-xwidget"
+           :files (:defaults "resources")))
 ;; Prettier org/markdown margins
 (package! olivetti)
 ;; Show others what I type

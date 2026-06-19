@@ -301,14 +301,48 @@ characters per visual line with New York.")
                  '("note" "info" "tip" "hint" "important" "warning" "caution"
                    "danger" "error" "question" "quote" "example" "todo"))))
 
+  (defun my/org-reading--push-guide-overlay (beg end &rest props)
+    "Create a guide overlay from BEG to END with PROPS."
+    (let ((ov (make-overlay beg end)))
+      (overlay-put ov 'category 'my/org-reading-block-guide)
+      (overlay-put ov 'priority 80)
+      (overlay-put ov 'evaporate t)
+      (while props
+        (overlay-put ov (pop props) (pop props)))
+      (push ov my/org-reading-block-guide-overlays)))
+
+  (defun my/org-reading--indent-guide-string (columns)
+    "Return a subtle guide string for COLUMNS columns of Org list indentation."
+    (let ((result "")
+          (remaining columns))
+      (while (> remaining 0)
+        (setq result (concat result (if (> remaining 1) "│ " "│"))
+              remaining (- remaining 2)))
+      result))
+
+  (defun my/org-reading-indent-guides-refresh ()
+    "Draw subtle guides in the leading indentation of nested Org lists."
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "^\\([ \\t]+\\)\\(?:[-+*]\\|[0-9]+[.)]\\)[ \\t]" nil t)
+        (let* ((indent-beg (match-beginning 1))
+               (indent-end (match-end 1))
+               (columns (string-width (match-string 1)))
+               (guide (my/org-reading--indent-guide-string columns)))
+          (when (> columns 1)
+            (my/org-reading--push-guide-overlay
+             indent-beg indent-end
+             'display (propertize guide 'face 'my/reading-block-guide-face)))))))
+
   (defun my/org-reading-block-guides-refresh ()
-    "Draw close inline guides for Org blocks without using the window fringe."
+    "Draw close inline guides for Org blocks/lists without using the fringe."
     (when (derived-mode-p 'org-mode)
       (setq my/org-reading-block-guide-timer nil)
       (my/org-reading-block-guides-clear)
       (save-excursion
         (save-restriction
           (widen)
+          (my/org-reading-indent-guides-refresh)
           (let ((ast (org-element-parse-buffer)))
             (org-element-map ast '(src-block quote-block example-block verse-block special-block)
               (lambda (element)
@@ -325,13 +359,15 @@ characters per visual line with New York.")
                              (guide (cond ((and (= line-beg first-line) (>= next-line end)) "├ ")
                                           ((= line-beg first-line) "╭ ")
                                           ((>= next-line end) "╰ ")
-                                          (t "│ ")))
-                             (ov (make-overlay line-beg line-beg)))
-                        (overlay-put ov 'category 'my/org-reading-block-guide)
-                        (overlay-put ov 'priority 80)
-                        (overlay-put ov 'evaporate t)
-                        (overlay-put ov 'before-string (propertize guide 'face face))
-                        (push ov my/org-reading-block-guide-overlays))
+                                          (t "│ "))))
+                        ;; `before-string' on zero-width overlays is easy for
+                        ;; other display properties to obscure. A per-line
+                        ;; `line-prefix' survives org-modern, visual-line-mode
+                        ;; and Olivetti more reliably.
+                        (my/org-reading--push-guide-overlay
+                         line-beg (min next-line end)
+                         'line-prefix (propertize guide 'face face)
+                         'wrap-prefix (propertize "  " 'face face)))
                       (forward-line 1)))))))))))
 
   (defun my/org-reading-block-guides-schedule (&rest _)

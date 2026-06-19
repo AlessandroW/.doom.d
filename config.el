@@ -9,12 +9,20 @@
 (load! "config/org-roam.el")
 (load! "config/reading.el")
 
+(defun my/first-available-font (&rest fonts)
+  "Return the first available font family from FONTS."
+  (catch 'font
+    (dolist (font fonts)
+      (when (member font (font-family-list))
+        (throw 'font font)))
+    (car fonts)))
+
 ;; UI and Window Management
 ;(desktop-save-mode 1)
 
 (setq! doom-theme 'doom-one
        doom-font (font-spec :family "FiraCode Nerd Font" :size 14)
-       doom-variable-pitch-font (font-spec :family "New York" :size 16)
+       doom-variable-pitch-font (font-spec :family (my/first-available-font ".New York" "New York" "Georgia" "Times New Roman" "serif") :size 16)
        ;; Big font for recording
        doom-big-font (font-spec :family "FiraCode Nerd Font" :size 24)
        display-line-numbers-type t

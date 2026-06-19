@@ -32,7 +32,10 @@
 
 ;; Hide emphasis markers in org
 (package! org-appear :recipe (:host github :repo "awth13/org-appear"))
-;; Prettier org margins
+;; Pretty reading stack for org/markdown
+(package! org-modern)
+(package! valign)
+;; Prettier org/markdown margins
 (package! olivetti)
 ;; Show others what I type
 (package! keycast)

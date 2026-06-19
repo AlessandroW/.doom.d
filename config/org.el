@@ -183,12 +183,3 @@ function doesn't move point."
   :config (setq org-hide-emphasis-markers t)
   :hook (org-mode . org-appear-mode))
 
-;; Prettier Org document margins
-(use-package! olivetti
-  :after org
-  :config
-  (setq! olivetti-min-body-width 50
-         olivetti-body-width 120
-         olivetti-style t ; fantastic new layout
-         olivetti-margin-width 12)
-  :hook (org-mode . olivetti-mode))

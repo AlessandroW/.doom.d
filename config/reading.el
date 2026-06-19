@@ -45,11 +45,27 @@ characters per visual line with New York.")
   (my/reading--first-available-font "Avenir Next" "Avenir" "Helvetica Neue" "Helvetica" "sans")
   "Sans-serif font for document headings.")
 
+(defface my/reading-metadata-face
+  '((t :inherit shadow :height 0.82))
+  "Face for subdued Org/Markdown metadata lines.")
+
+(defun my/reading--dark-color-p (color)
+  "Return non-nil when COLOR is visually dark."
+  (require 'color)
+  (let ((rgb (color-name-to-rgb color)))
+    (and rgb (< (apply #'+ rgb) 1.5))))
+
+(defun my/reading--adjust-color (color light-percent dark-percent)
+  "Lighten or darken COLOR by LIGHT-PERCENT or DARK-PERCENT."
+  (require 'color)
+  (if (my/reading--dark-color-p color)
+      (color-lighten-name color light-percent)
+    (color-darken-name color dark-percent)))
+
 (defun my/reading--subtle-background ()
   "Return a theme-derived background for code/block cards."
-  (or (face-background 'tooltip nil t)
-      (face-background 'mode-line nil t)
-      (face-background 'default nil t)))
+  (let ((bg (or (face-background 'default nil t) "#ffffff")))
+    (my/reading--adjust-color bg 7 4)))
 
 (defun my/pretty-reading-buffer-p ()
   "Return non-nil when the current buffer should use pretty reading polish."
@@ -90,7 +106,11 @@ characters per visual line with New York.")
     (mixed-pitch-mode 1))
   (when (fboundp 'olivetti-mode)
     (olivetti-mode 1))
-  (when (fboundp 'valign-mode)
+  ;; `org-modern-table' and `valign' both rewrite table separators; together
+  ;; they create doubled table-line artifacts. Keep `valign' for Markdown, and
+  ;; let `org-modern' own Org tables.
+  (when (and (fboundp 'valign-mode)
+             (not (derived-mode-p 'org-mode)))
     (valign-mode 1))
   ;; Some modes/window changes compute margins before the window has settled.
   ;; Refresh once on the next tick; this mirrors the "toggle writeroom fixes it"
@@ -151,15 +171,15 @@ characters per visual line with New York.")
   (let ((block-bg (my/reading--subtle-background)))
     (custom-set-faces!
       ;; Document typography.
-      `(org-document-title :inherit variable-pitch :family ,my/reading-heading-font :height 1.70 :weight bold)
-      `(org-level-1 :inherit variable-pitch :family ,my/reading-heading-font :height 1.50 :weight bold)
-      `(org-level-2 :inherit variable-pitch :family ,my/reading-heading-font :height 1.35 :weight bold)
-      `(org-level-3 :inherit variable-pitch :family ,my/reading-heading-font :height 1.22 :weight bold)
-      `(org-level-4 :inherit variable-pitch :family ,my/reading-heading-font :height 1.12 :weight semi-bold)
-      `(org-level-5 :inherit variable-pitch :family ,my/reading-heading-font :height 1.05 :weight semi-bold)
-      `(org-level-6 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight semi-bold)
-      `(org-level-7 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight normal)
-      `(org-level-8 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight normal)
+      `(org-document-title :inherit variable-pitch :family ,my/reading-heading-font :height 1.70 :weight bold :foreground ,(face-foreground 'default))
+      `(org-level-1 :inherit variable-pitch :family ,my/reading-heading-font :height 1.50 :weight bold :foreground ,(face-foreground 'default))
+      `(org-level-2 :inherit variable-pitch :family ,my/reading-heading-font :height 1.35 :weight bold :foreground ,(face-foreground 'default))
+      `(org-level-3 :inherit variable-pitch :family ,my/reading-heading-font :height 1.22 :weight bold :foreground ,(face-foreground 'default))
+      `(org-level-4 :inherit variable-pitch :family ,my/reading-heading-font :height 1.12 :weight semi-bold :foreground ,(face-foreground 'default))
+      `(org-level-5 :inherit variable-pitch :family ,my/reading-heading-font :height 1.05 :weight semi-bold :foreground ,(face-foreground 'default))
+      `(org-level-6 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight semi-bold :foreground ,(face-foreground 'default))
+      `(org-level-7 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight normal :foreground ,(face-foreground 'default))
+      `(org-level-8 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight normal :foreground ,(face-foreground 'default))
       `(org-link :inherit link :weight normal :underline ,(face-foreground 'link nil t))
 
       ;; Keep source/structure editable, but quiet.
@@ -172,14 +192,52 @@ characters per visual line with New York.")
       '(org-verbatim :inherit (fixed-pitch org-verbatim))
       '(org-table :inherit fixed-pitch)
       '(org-formula :inherit fixed-pitch)
-      '(org-meta-line :inherit (fixed-pitch shadow) :height 0.85)
-      '(org-document-info-keyword :inherit (fixed-pitch shadow) :height 0.85)
-      '(org-special-keyword :inherit (fixed-pitch shadow) :height 0.85)
-      '(org-property-value :inherit (fixed-pitch shadow) :height 0.85)
-      '(org-drawer :inherit (fixed-pitch shadow) :height 0.85)
+      '(org-checkbox :height 1.15 :weight normal)
+      '(org-meta-line :inherit my/reading-metadata-face)
+      '(org-document-info-keyword :inherit my/reading-metadata-face)
+      '(org-special-keyword :inherit my/reading-metadata-face)
+      '(org-property-value :inherit my/reading-metadata-face)
+      '(org-drawer :inherit my/reading-metadata-face)
       '(org-tag :inherit shadow :height 0.85)
       '(org-date :inherit shadow)
       '(org-indent :inherit org-hide)))
+
+  (defun my/org-pretty-reading-font-lock ()
+    "Add extra font-lock polish for pretty Org reading."
+    (font-lock-add-keywords
+     nil
+     '(("^#\\+\\(?:CREATED\\|LAST_MODIFIED\\|FILETAGS\\|filetags\\|SETUPFILE\\|setupfile\\):.*$"
+        0 'my/reading-metadata-face prepend)
+       ("^\\([ \\t]*[-+*][ \\t]+\\)\\(\\[[ X-]\\]\\)"
+        (1 '(face org-hide display "") prepend)))
+     'append))
+
+  (add-hook 'org-mode-hook #'my/org-pretty-reading-font-lock)
+
+  (defvar-local my/pretty-reading-edit-mode nil
+    "Non-nil when the current buffer is temporarily in source-editing view.")
+
+  (defun my/pretty-reading-toggle-view ()
+    "Toggle between pretty reading and source editing view for this buffer."
+    (interactive)
+    (setq-local my/pretty-reading-edit-mode (not my/pretty-reading-edit-mode))
+    (if my/pretty-reading-edit-mode
+        (progn
+          (when (bound-and-true-p olivetti-mode) (olivetti-mode -1))
+          (when (bound-and-true-p mixed-pitch-mode) (mixed-pitch-mode -1))
+          (when (bound-and-true-p valign-mode) (valign-mode -1))
+          (when (and (derived-mode-p 'org-mode) (bound-and-true-p org-modern-mode))
+            (org-modern-mode -1))
+          (when (derived-mode-p 'org-mode)
+            (setq-local org-hide-emphasis-markers nil))
+          (font-lock-flush)
+          (message "Pretty reading: edit/source view"))
+      (when (derived-mode-p 'org-mode)
+        (setq-local org-hide-emphasis-markers t)
+        (when (fboundp 'org-modern-mode) (org-modern-mode 1)))
+      (my/pretty-reading-setup)
+      (font-lock-flush)
+      (message "Pretty reading: document view")))
 
   (use-package! org-modern
     :hook (org-mode . org-modern-mode)
@@ -221,12 +279,12 @@ characters per visual line with New York.")
 
   (let ((block-bg (my/reading--subtle-background)))
     (custom-set-faces!
-      `(markdown-header-face-1 :inherit variable-pitch :family ,my/reading-heading-font :height 1.55 :weight bold)
-      `(markdown-header-face-2 :inherit variable-pitch :family ,my/reading-heading-font :height 1.38 :weight bold)
-      `(markdown-header-face-3 :inherit variable-pitch :family ,my/reading-heading-font :height 1.24 :weight bold)
-      `(markdown-header-face-4 :inherit variable-pitch :family ,my/reading-heading-font :height 1.14 :weight semi-bold)
-      `(markdown-header-face-5 :inherit variable-pitch :family ,my/reading-heading-font :height 1.06 :weight semi-bold)
-      `(markdown-header-face-6 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight normal)
+      `(markdown-header-face-1 :inherit variable-pitch :family ,my/reading-heading-font :height 1.55 :weight bold :foreground ,(face-foreground 'default))
+      `(markdown-header-face-2 :inherit variable-pitch :family ,my/reading-heading-font :height 1.38 :weight bold :foreground ,(face-foreground 'default))
+      `(markdown-header-face-3 :inherit variable-pitch :family ,my/reading-heading-font :height 1.24 :weight bold :foreground ,(face-foreground 'default))
+      `(markdown-header-face-4 :inherit variable-pitch :family ,my/reading-heading-font :height 1.14 :weight semi-bold :foreground ,(face-foreground 'default))
+      `(markdown-header-face-5 :inherit variable-pitch :family ,my/reading-heading-font :height 1.06 :weight semi-bold :foreground ,(face-foreground 'default))
+      `(markdown-header-face-6 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight normal :foreground ,(face-foreground 'default))
       `(markdown-code-face :inherit fixed-pitch :background ,block-bg)
       `(markdown-pre-face :inherit fixed-pitch :background ,block-bg :extend t)
       '(markdown-inline-code-face :inherit fixed-pitch)
@@ -274,4 +332,6 @@ characters per visual line with New York.")
 
 (map! :leader
       :desc "Toggle reading width"
-      "t W" #'my/pretty-reading-toggle-width)
+      "t W" #'my/pretty-reading-toggle-width
+      :desc "Toggle reading/editing view"
+      "t R" #'my/pretty-reading-toggle-view)

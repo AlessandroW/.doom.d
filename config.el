@@ -20,7 +20,7 @@
 ;; UI and Window Management
 ;(desktop-save-mode 1)
 
-(setq! doom-theme 'doom-one
+(setq! doom-theme 'doom-nano-light
        doom-font (font-spec :family "FiraCode Nerd Font" :size 14)
        doom-variable-pitch-font (font-spec :family (my/first-available-font ".New York" "New York" "Georgia" "Times New Roman" "serif") :size 16)
        ;; Big font for recording
@@ -47,7 +47,7 @@
 (defun my/whitespace-highlight ()
  "Originally from github.com/thejj/conffiles and doom/lisp.doom-ui.el"
  (unless (or (eq major-mode 'fundamental-mode)
-             (eq major-mode 'org-mode)
+             (derived-mode-p 'org-mode 'markdown-mode 'gfm-mode 'text-mode)
              (null buffer-file-name))
    (require 'whitespace)
    (setq-local whitespace-style

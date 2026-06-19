@@ -280,6 +280,9 @@ characters per visual line with New York.")
 
   (add-hook 'org-mode-hook #'my/org-pretty-reading-font-lock)
 
+  (defvar-local my/pretty-reading-edit-mode nil
+    "Non-nil when the current buffer is temporarily in source-editing view.")
+
   (defvar-local my/org-reading-block-guide-overlays nil
     "Close inline block guide overlays in the current Org buffer.")
 
@@ -341,7 +344,7 @@ characters per visual line with New York.")
                                  (lambda (buffer)
                                    (when (buffer-live-p buffer)
                                      (with-current-buffer buffer
-                                       (unless my/pretty-reading-edit-mode
+                                       (unless (bound-and-true-p my/pretty-reading-edit-mode)
                                          (my/org-reading-block-guides-refresh)))))
                                  (current-buffer)))))
 
@@ -351,9 +354,6 @@ characters per visual line with New York.")
     (my/org-reading-block-guides-schedule))
 
   (add-hook 'org-mode-hook #'my/org-reading-block-guides-setup)
-
-  (defvar-local my/pretty-reading-edit-mode nil
-    "Non-nil when the current buffer is temporarily in source-editing view.")
 
   (defun my/pretty-reading-toggle-view ()
     "Toggle between pretty reading and source editing view for this buffer."

@@ -49,6 +49,14 @@ characters per visual line with New York.")
   '((t :inherit shadow :height 0.82))
   "Face for subdued Org/Markdown metadata lines.")
 
+(defface my/reading-block-guide-face
+  '((t :inherit shadow))
+  "Face for close inline Org block guides.")
+
+(defface my/reading-callout-guide-face
+  '((t :inherit my/reading-block-guide-face))
+  "Face for close inline Org callout block guides.")
+
 (defun my/reading--dark-color-p (color)
   "Return non-nil when COLOR is visually dark."
   (require 'color)
@@ -126,7 +134,10 @@ characters per visual line with New York.")
   ;; Some modes/window changes compute margins before the window has settled.
   ;; Refresh once on the next tick; this mirrors the "toggle writeroom fixes it"
   ;; effect without letting writeroom own the buffer font.
-  (run-at-time 0 nil #'my/pretty-reading--refresh-layout (current-buffer)))
+  (run-at-time 0 nil #'my/pretty-reading--refresh-layout (current-buffer))
+  (when (and (derived-mode-p 'org-mode)
+             (fboundp 'my/org-reading-block-guides-schedule))
+    (my/org-reading-block-guides-schedule)))
 
 (defun my/pretty-reading-toggle-width ()
   "Toggle the current reading buffer between default and wide body widths."
@@ -195,7 +206,11 @@ characters per visual line with New York.")
            ;; saturated dark themes.
            (metadata-fg (my/reading--blend-color
                          default-fg default-bg
-                         (if (my/reading--dark-color-p default-bg) 0.48 0.55))))
+                         (if (my/reading--dark-color-p default-bg) 0.48 0.55)))
+           (guide-fg (my/reading--blend-color
+                      default-fg default-bg
+                      (if (my/reading--dark-color-p default-bg) 0.30 0.24)))
+           (callout-fg (or (face-foreground 'link nil t) guide-fg)))
       (custom-set-faces!
         ;; Document typography.
         `(org-document-title :inherit variable-pitch :family ,my/reading-heading-font :height 1.90 :weight bold :foreground ,default-fg)
@@ -211,7 +226,9 @@ characters per visual line with New York.")
 
         ;; Keep source/structure editable, but quiet. Recompute on theme changes.
         `(my/reading-metadata-face :inherit fixed-pitch :foreground ,metadata-fg :height 0.78)
-        ;; Let org-modern own block shape/fringe; only keep fixed-pitch code.
+        `(my/reading-block-guide-face :foreground ,guide-fg :weight normal)
+        `(my/reading-callout-guide-face :foreground ,callout-fg :weight semi-bold)
+        ;; Let org-modern own block names; custom overlays draw close guides.
         `(org-block :inherit fixed-pitch :background unspecified :extend nil)
         `(org-quote :inherit variable-pitch :slant italic :background unspecified :extend nil)
         `(org-verse :inherit variable-pitch :background unspecified :extend nil)
@@ -263,6 +280,78 @@ characters per visual line with New York.")
 
   (add-hook 'org-mode-hook #'my/org-pretty-reading-font-lock)
 
+  (defvar-local my/org-reading-block-guide-overlays nil
+    "Close inline block guide overlays in the current Org buffer.")
+
+  (defvar-local my/org-reading-block-guide-timer nil
+    "Debounce timer for refreshing Org block guide overlays.")
+
+  (defun my/org-reading-block-guides-clear ()
+    "Remove close inline Org block guide overlays from the current buffer."
+    (mapc #'delete-overlay my/org-reading-block-guide-overlays)
+    (setq my/org-reading-block-guide-overlays nil))
+
+  (defun my/org-reading--callout-block-p (element)
+    "Return non-nil when ELEMENT is an Org special block used as a callout."
+    (and (eq (org-element-type element) 'special-block)
+         (member (downcase (or (org-element-property :type element) ""))
+                 '("note" "info" "tip" "hint" "important" "warning" "caution"
+                   "danger" "error" "question" "quote" "example" "todo"))))
+
+  (defun my/org-reading-block-guides-refresh ()
+    "Draw close inline guides for Org blocks without using the window fringe."
+    (when (derived-mode-p 'org-mode)
+      (setq my/org-reading-block-guide-timer nil)
+      (my/org-reading-block-guides-clear)
+      (save-excursion
+        (save-restriction
+          (widen)
+          (let ((ast (org-element-parse-buffer)))
+            (org-element-map ast '(src-block quote-block example-block verse-block special-block)
+              (lambda (element)
+                (let ((beg (org-element-property :begin element))
+                      (end (copy-marker (org-element-property :end element)))
+                      (face (if (my/org-reading--callout-block-p element)
+                                'my/reading-callout-guide-face
+                              'my/reading-block-guide-face)))
+                  (goto-char beg)
+                  (let ((first-line (line-beginning-position)))
+                    (while (< (point) end)
+                      (let* ((line-beg (line-beginning-position))
+                             (next-line (save-excursion (forward-line 1) (point)))
+                             (guide (cond ((and (= line-beg first-line) (>= next-line end)) "├ ")
+                                          ((= line-beg first-line) "╭ ")
+                                          ((>= next-line end) "╰ ")
+                                          (t "│ ")))
+                             (ov (make-overlay line-beg line-beg)))
+                        (overlay-put ov 'category 'my/org-reading-block-guide)
+                        (overlay-put ov 'priority 80)
+                        (overlay-put ov 'evaporate t)
+                        (overlay-put ov 'before-string (propertize guide 'face face))
+                        (push ov my/org-reading-block-guide-overlays))
+                      (forward-line 1)))))))))))
+
+  (defun my/org-reading-block-guides-schedule (&rest _)
+    "Debounce close inline Org block guide refreshes."
+    (when (derived-mode-p 'org-mode)
+      (when (timerp my/org-reading-block-guide-timer)
+        (cancel-timer my/org-reading-block-guide-timer))
+      (setq my/org-reading-block-guide-timer
+            (run-with-idle-timer 0.18 nil
+                                 (lambda (buffer)
+                                   (when (buffer-live-p buffer)
+                                     (with-current-buffer buffer
+                                       (unless my/pretty-reading-edit-mode
+                                         (my/org-reading-block-guides-refresh)))))
+                                 (current-buffer)))))
+
+  (defun my/org-reading-block-guides-setup ()
+    "Enable close inline block guides in the current Org buffer."
+    (add-hook 'after-change-functions #'my/org-reading-block-guides-schedule nil t)
+    (my/org-reading-block-guides-schedule))
+
+  (add-hook 'org-mode-hook #'my/org-reading-block-guides-setup)
+
   (defvar-local my/pretty-reading-edit-mode nil
     "Non-nil when the current buffer is temporarily in source-editing view.")
 
@@ -278,7 +367,8 @@ characters per visual line with New York.")
           (when (and (derived-mode-p 'org-mode) (bound-and-true-p org-modern-mode))
             (org-modern-mode -1))
           (when (derived-mode-p 'org-mode)
-            (setq-local org-hide-emphasis-markers nil))
+            (setq-local org-hide-emphasis-markers nil)
+            (my/org-reading-block-guides-clear))
           (font-lock-flush)
           (message "Pretty reading: edit/source view"))
       (when (derived-mode-p 'org-mode)
@@ -299,9 +389,9 @@ characters per visual line with New York.")
                                  (?\s . ,(propertize "☐" 'face '(:height 1.35))))
            org-modern-timestamp nil
            org-modern-block-name t
-           ;; With Olivetti margins, fringe block brackets sit at the window
-           ;; edge instead of next to the block. Keep begin/end labels quiet and
-           ;; avoid distant brackets.
+           ;; Do not use org-modern's fringe bracket: Olivetti centers the text
+           ;; column but the fringe stays at the window edge. We draw close
+           ;; inline guides with overlays instead.
            org-modern-block-fringe nil
            org-modern-table t
            org-modern-table-vertical 2

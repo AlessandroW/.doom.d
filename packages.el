@@ -33,8 +33,6 @@
 ;; Hide emphasis markers in org
 (package! org-appear :recipe (:host github :repo "awth13/org-appear"))
 ;; Pretty reading stack for org/markdown
-(package! doom-nano-themes
-  :recipe (:host github :repo "ronisbr/doom-nano-themes"))
 (package! org-modern)
 (package! valign)
 ;; Prettier org/markdown margins

@@ -178,7 +178,7 @@ characters per visual line with New York.")
     "Apply theme-aware faces for pretty Org/Markdown reading."
     (let* ((default-bg (or (face-background 'default nil t) "#ffffff"))
            (block-bg (my/reading--subtle-background))
-           (metadata-fg (my/reading--adjust-color default-bg 24 20))
+           (metadata-fg (my/reading--adjust-color default-bg 18 12))
            (default-fg (face-foreground 'default nil t)))
       (custom-set-faces!
         ;; Document typography.
@@ -194,12 +194,13 @@ characters per visual line with New York.")
         `(org-link :inherit link :weight normal :underline ,(face-foreground 'link nil t))
 
         ;; Keep source/structure editable, but quiet. Recompute on theme changes.
-        `(my/reading-metadata-face :inherit fixed-pitch :foreground ,metadata-fg :height 0.72)
-        `(org-block :inherit fixed-pitch :background ,block-bg :extend nil)
-        `(org-quote :inherit variable-pitch :slant italic :background ,block-bg :extend nil)
-        `(org-verse :inherit variable-pitch :background ,block-bg :extend nil)
-        `(org-block-begin-line :inherit my/reading-metadata-face :background ,block-bg :extend nil)
-        `(org-block-end-line :inherit my/reading-metadata-face :background ,block-bg :extend nil)
+        `(my/reading-metadata-face :inherit fixed-pitch :foreground ,metadata-fg :height 0.68)
+        ;; Let org-modern own block shape/fringe; only keep fixed-pitch code.
+        `(org-block :inherit fixed-pitch :background unspecified :extend nil)
+        `(org-quote :inherit variable-pitch :slant italic :background unspecified :extend nil)
+        `(org-verse :inherit variable-pitch :background unspecified :extend nil)
+        `(org-block-begin-line :inherit my/reading-metadata-face :background unspecified :extend nil)
+        `(org-block-end-line :inherit my/reading-metadata-face :background unspecified :extend nil)
         '(org-code :inherit (fixed-pitch org-code))
         '(org-verbatim :inherit (fixed-pitch org-verbatim))
         '(org-table :inherit fixed-pitch)
@@ -238,6 +239,8 @@ characters per visual line with New York.")
      nil
      '(("^\\(?:#\\+\\)?\\(?:CREATED\\|LAST_MODIFIED\\|FILETAGS\\|filetags\\|SETUPFILE\\|setupfile\\):.*$"
         0 'my/reading-metadata-face prepend)
+       ("^[ \\t]*:\\(?:PROPERTIES\\|END\\):.*$"
+        0 'my/reading-metadata-face prepend)
        ("^\\([ \\t]*[-+*][ \\t]+\\)\\(\\[[ X-]\\]\\)"
         (1 '(face org-hide display "") prepend)))
      'append))
@@ -275,9 +278,12 @@ characters per visual line with New York.")
     (setq! org-modern-star nil
            org-modern-hide-stars t
            org-modern-list '((?+ . "•") (?- . "•") (?* . "•"))
-           org-modern-checkbox '((?X . "☑") (?- . "◩") (?\s . "☐"))
+           org-modern-checkbox `((?X . ,(propertize "☑" 'face '(:height 1.35)))
+                                 (?- . ,(propertize "◩" 'face '(:height 1.35)))
+                                 (?\s . ,(propertize "☐" 'face '(:height 1.35))))
+           org-modern-timestamp nil
            org-modern-block-name t
-           org-modern-block-fringe nil
+           org-modern-block-fringe 2
            org-modern-table t
            org-modern-table-vertical 2
            org-modern-table-horizontal 0.15

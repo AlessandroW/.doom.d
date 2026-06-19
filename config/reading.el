@@ -209,7 +209,7 @@ characters per visual line with New York.")
                          (if (my/reading--dark-color-p default-bg) 0.48 0.55)))
            (guide-fg (my/reading--blend-color
                       default-fg default-bg
-                      (if (my/reading--dark-color-p default-bg) 0.30 0.24)))
+                      (if (my/reading--dark-color-p default-bg) 0.24 0.18)))
            (callout-fg (or (face-foreground 'link nil t) guide-fg)))
       (custom-set-faces!
         ;; Document typography.
@@ -316,7 +316,7 @@ characters per visual line with New York.")
     (let ((result "")
           (remaining columns))
       (while (> remaining 0)
-        (setq result (concat result (if (> remaining 1) "│ " "│"))
+        (setq result (concat result (if (> remaining 1) "▏ " "▏"))
               remaining (- remaining 2)))
       result))
 
@@ -346,9 +346,17 @@ characters per visual line with New York.")
           (let ((ast (org-element-parse-buffer)))
             (org-element-map ast '(src-block quote-block example-block verse-block special-block)
               (lambda (element)
-                (let ((beg (org-element-property :begin element))
-                      (end (copy-marker (org-element-property :end element)))
-                      (face (if (my/org-reading--callout-block-p element)
+                (let* ((beg (org-element-property :begin element))
+                       ;; Org element `:end' often includes trailing blank
+                       ;; lines after #+end_src/# +end_quote. Stop guides on
+                       ;; the actual closing delimiter line so the visual close
+                       ;; matches the ending block label.
+                       (raw-end (org-element-property :end element))
+                       (end (save-excursion
+                              (goto-char raw-end)
+                              (skip-chars-backward " \t\n" beg)
+                              (line-end-position)))
+                       (face (if (my/org-reading--callout-block-p element)
                                 'my/reading-callout-guide-face
                               'my/reading-block-guide-face)))
                   (goto-char beg)
@@ -356,10 +364,10 @@ characters per visual line with New York.")
                     (while (< (point) end)
                       (let* ((line-beg (line-beginning-position))
                              (next-line (save-excursion (forward-line 1) (point)))
-                             (guide (cond ((and (= line-beg first-line) (>= next-line end)) "├ ")
-                                          ((= line-beg first-line) "╭ ")
-                                          ((>= next-line end) "╰ ")
-                                          (t "│ "))))
+                             ;; Use a full-height one-eighth block instead of
+                             ;; box-drawing glyphs. It reads like Obsidian's
+                             ;; thin connected guide and avoids line-height gaps.
+                             (guide "▏ "))
                         ;; `before-string' on zero-width overlays is easy for
                         ;; other display properties to obscure. A per-line
                         ;; `line-prefix' survives org-modern, visual-line-mode

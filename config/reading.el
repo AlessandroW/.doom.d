@@ -10,6 +10,18 @@
 (defvar my/reading-wide-width 120
   "Wide centered body width for code/table-heavy reading buffers.")
 
+(defun my/reading--first-available-font (&rest fonts)
+  "Return the first available font family from FONTS."
+  (catch 'font
+    (dolist (font fonts)
+      (when (member font (font-family-list))
+        (throw 'font font)))
+    (car fonts)))
+
+(defvar my/reading-heading-font
+  (my/reading--first-available-font "Avenir Next" "Avenir" "Helvetica Neue" "Helvetica" "sans")
+  "Sans-serif font for document headings.")
+
 (defun my/reading--subtle-background ()
   "Return a theme-derived background for code/block cards."
   (or (face-background 'tooltip nil t)
@@ -18,7 +30,8 @@
 
 (defun my/pretty-reading-buffer-p ()
   "Return non-nil when the current buffer should use pretty reading polish."
-  (derived-mode-p 'org-mode 'markdown-mode 'gfm-mode 'markdown-view-mode))
+  (derived-mode-p 'org-mode 'markdown-mode 'gfm-mode
+                  'markdown-view-mode 'gfm-view-mode))
 
 (defun my/pretty-reading--refresh-layout (&optional buffer)
   "Refresh reading layout for BUFFER after window/mode toggles settle."
@@ -71,6 +84,11 @@
 (use-package! valign
   :defer t)
 
+;; Open Markdown as a read-only reading view by default. Use `e' in the view
+;; buffer to switch back to editable GFM mode.
+(add-to-list 'auto-mode-alist '("\\.md\\'" . gfm-view-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . gfm-view-mode))
+
 (after! mixed-pitch
   ;; Doom's :ui zen supplies mixed-pitch. Keep common structured text fixed-pitch.
   (setq mixed-pitch-set-height t)
@@ -84,7 +102,9 @@
 
 (after! org
   (setq! org-hide-emphasis-markers t
+         org-hidden-keywords '(title)
          org-pretty-entities t
+         org-hide-leading-stars t
          org-startup-indented t
          org-startup-with-inline-images t
          ;; Headings should read like document headings, not outline bullets.
@@ -93,15 +113,15 @@
   (let ((block-bg (my/reading--subtle-background)))
     (custom-set-faces!
       ;; Document typography.
-      '(org-document-title :inherit variable-pitch :height 1.55 :weight bold)
-      '(org-level-1 :inherit variable-pitch :height 1.35 :weight bold)
-      '(org-level-2 :inherit variable-pitch :height 1.23 :weight semi-bold)
-      '(org-level-3 :inherit variable-pitch :height 1.13 :weight semi-bold)
-      '(org-level-4 :inherit variable-pitch :height 1.06 :weight semi-bold)
-      '(org-level-5 :inherit variable-pitch :height 1.0 :weight normal)
-      '(org-level-6 :inherit variable-pitch :height 1.0 :weight normal)
-      '(org-level-7 :inherit variable-pitch :height 1.0 :weight normal)
-      '(org-level-8 :inherit variable-pitch :height 1.0 :weight normal)
+      `(org-document-title :inherit variable-pitch :family ,my/reading-heading-font :height 1.70 :weight bold)
+      `(org-level-1 :inherit variable-pitch :family ,my/reading-heading-font :height 1.50 :weight bold)
+      `(org-level-2 :inherit variable-pitch :family ,my/reading-heading-font :height 1.35 :weight bold)
+      `(org-level-3 :inherit variable-pitch :family ,my/reading-heading-font :height 1.22 :weight bold)
+      `(org-level-4 :inherit variable-pitch :family ,my/reading-heading-font :height 1.12 :weight semi-bold)
+      `(org-level-5 :inherit variable-pitch :family ,my/reading-heading-font :height 1.05 :weight semi-bold)
+      `(org-level-6 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight semi-bold)
+      `(org-level-7 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight normal)
+      `(org-level-8 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight normal)
       `(org-link :inherit link :weight normal :underline ,(face-foreground 'link nil t))
 
       ;; Keep source/structure editable, but quiet.
@@ -125,7 +145,7 @@
     :hook (org-mode . org-modern-mode)
     :config
     (setq! org-modern-star nil
-           org-modern-hide-stars nil
+           org-modern-hide-stars t
            org-modern-list '((?+ . "•") (?- . "•") (?* . "•"))
            org-modern-checkbox '((?X . "☑") (?- . "◩") (?\s . "☐"))
            org-modern-block-fringe nil
@@ -136,28 +156,53 @@
   (add-hook 'org-mode-hook #'my/pretty-reading-setup))
 
 (after! markdown-mode
+  (defun my/markdown-view-edit ()
+    "Switch the current Markdown view buffer to editable GFM mode."
+    (interactive)
+    (gfm-mode)
+    (my/pretty-reading-setup)
+    (message "Markdown edit mode"))
+
+  (map! :map markdown-view-mode-map
+        :desc "Edit Markdown" "e" #'my/markdown-view-edit)
+  (when (boundp 'gfm-view-mode-map)
+    (map! :map gfm-view-mode-map
+          :desc "Edit Markdown" "e" #'my/markdown-view-edit))
+
   (setq! markdown-hide-markup t
-         markdown-fontify-code-blocks-natively t)
+         markdown-hide-urls t
+         markdown-fontify-code-blocks-natively t
+         markdown-blockquote-display-char "▌"
+         markdown-make-gfm-checkboxes-buttons t
+         markdown-gfm-uppercase-checkbox t)
 
   (let ((block-bg (my/reading--subtle-background)))
     (custom-set-faces!
-      '(markdown-header-face-1 :inherit variable-pitch :height 1.45 :weight bold)
-      '(markdown-header-face-2 :inherit variable-pitch :height 1.30 :weight bold)
-      '(markdown-header-face-3 :inherit variable-pitch :height 1.18 :weight semi-bold)
-      '(markdown-header-face-4 :inherit variable-pitch :height 1.10 :weight semi-bold)
-      '(markdown-header-face-5 :inherit variable-pitch :height 1.03 :weight normal)
-      '(markdown-header-face-6 :inherit variable-pitch :height 1.0 :weight normal)
+      `(markdown-header-face-1 :inherit variable-pitch :family ,my/reading-heading-font :height 1.55 :weight bold)
+      `(markdown-header-face-2 :inherit variable-pitch :family ,my/reading-heading-font :height 1.38 :weight bold)
+      `(markdown-header-face-3 :inherit variable-pitch :family ,my/reading-heading-font :height 1.24 :weight bold)
+      `(markdown-header-face-4 :inherit variable-pitch :family ,my/reading-heading-font :height 1.14 :weight semi-bold)
+      `(markdown-header-face-5 :inherit variable-pitch :family ,my/reading-heading-font :height 1.06 :weight semi-bold)
+      `(markdown-header-face-6 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight normal)
       `(markdown-code-face :inherit fixed-pitch :background ,block-bg)
       `(markdown-pre-face :inherit fixed-pitch :background ,block-bg :extend t)
       '(markdown-inline-code-face :inherit fixed-pitch)
       '(markdown-table-face :inherit fixed-pitch)
       '(markdown-markup-face :inherit shadow :height 0.9)
       '(markdown-url-face :inherit shadow)
+      '(markdown-blockquote-face :inherit shadow :slant normal)
       '(markdown-link-face :inherit link :weight normal)))
 
   (add-hook 'markdown-mode-hook #'my/pretty-reading-setup)
   (add-hook 'gfm-mode-hook #'my/pretty-reading-setup)
-  (add-hook 'markdown-view-mode-hook #'my/pretty-reading-setup))
+  (add-hook 'markdown-view-mode-hook #'my/pretty-reading-setup)
+  (add-hook 'gfm-view-mode-hook #'my/pretty-reading-setup))
+
+(add-hook 'after-change-major-mode-hook
+          (defun my/pretty-reading-after-major-mode-h ()
+            "Apply pretty reading to buffers that entered a reading mode early."
+            (when (my/pretty-reading-buffer-p)
+              (my/pretty-reading-setup))))
 
 (after! writeroom-mode
   ;; Doom's writeroom toggles `mixed-pitch-mode' as a local effect. Since our

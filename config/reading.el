@@ -67,6 +67,17 @@ characters per visual line with New York.")
   (let ((bg (or (face-background 'default nil t) "#ffffff")))
     (my/reading--adjust-color bg 7 4)))
 
+(defun my/reading--blend-color (foreground background alpha)
+  "Blend FOREGROUND over BACKGROUND by ALPHA and return a hex color."
+  (require 'color)
+  (require 'cl-lib)
+  (let ((fg (color-name-to-rgb foreground))
+        (bg (color-name-to-rgb background)))
+    (if (and fg bg)
+        (apply #'color-rgb-to-hex
+               (cl-mapcar (lambda (f b) (+ (* alpha f) (* (- 1 alpha) b))) fg bg))
+      foreground)))
+
 (defun my/pretty-reading-buffer-p ()
   "Return non-nil when the current buffer should use pretty reading polish."
   (derived-mode-p 'org-mode 'markdown-mode 'gfm-mode
@@ -178,8 +189,13 @@ characters per visual line with New York.")
     "Apply theme-aware faces for pretty Org/Markdown reading."
     (let* ((default-bg (or (face-background 'default nil t) "#ffffff"))
            (block-bg (my/reading--subtle-background))
-           (metadata-fg (my/reading--adjust-color default-bg 18 12))
-           (default-fg (face-foreground 'default nil t)))
+           (default-fg (or (face-foreground 'default nil t) "#000000"))
+           ;; Metadata must stay quiet but readable on both Doom One and light
+           ;; themes. Deriving it only from the background made it disappear on
+           ;; saturated dark themes.
+           (metadata-fg (my/reading--blend-color
+                         default-fg default-bg
+                         (if (my/reading--dark-color-p default-bg) 0.48 0.55))))
       (custom-set-faces!
         ;; Document typography.
         `(org-document-title :inherit variable-pitch :family ,my/reading-heading-font :height 1.90 :weight bold :foreground ,default-fg)
@@ -194,7 +210,7 @@ characters per visual line with New York.")
         `(org-link :inherit link :weight normal :underline ,(face-foreground 'link nil t))
 
         ;; Keep source/structure editable, but quiet. Recompute on theme changes.
-        `(my/reading-metadata-face :inherit fixed-pitch :foreground ,metadata-fg :height 0.68)
+        `(my/reading-metadata-face :inherit fixed-pitch :foreground ,metadata-fg :height 0.78)
         ;; Let org-modern own block shape/fringe; only keep fixed-pitch code.
         `(org-block :inherit fixed-pitch :background unspecified :extend nil)
         `(org-quote :inherit variable-pitch :slant italic :background unspecified :extend nil)
@@ -239,7 +255,7 @@ characters per visual line with New York.")
      nil
      '(("^\\(?:#\\+\\)?\\(?:CREATED\\|LAST_MODIFIED\\|FILETAGS\\|filetags\\|SETUPFILE\\|setupfile\\):.*$"
         0 'my/reading-metadata-face prepend)
-       ("^[ \\t]*:\\(?:PROPERTIES\\|END\\):.*$"
+       ("^[ \\t]*:\\(?:PROPERTIES\\|END\\|[[:alnum:]_@#%]+\\):.*$"
         0 'my/reading-metadata-face prepend)
        ("^\\([ \\t]*[-+*][ \\t]+\\)\\(\\[[ X-]\\]\\)"
         (1 '(face org-hide display "") prepend)))
@@ -283,7 +299,10 @@ characters per visual line with New York.")
                                  (?\s . ,(propertize "☐" 'face '(:height 1.35))))
            org-modern-timestamp nil
            org-modern-block-name t
-           org-modern-block-fringe 2
+           ;; With Olivetti margins, fringe block brackets sit at the window
+           ;; edge instead of next to the block. Keep begin/end labels quiet and
+           ;; avoid distant brackets.
+           org-modern-block-fringe nil
            org-modern-table t
            org-modern-table-vertical 2
            org-modern-table-horizontal 0.15

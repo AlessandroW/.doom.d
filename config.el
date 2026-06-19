@@ -22,7 +22,7 @@
 
 (setq! doom-theme 'doom-nano-light
        doom-font (font-spec :family "FiraCode Nerd Font" :size 14)
-       doom-variable-pitch-font (font-spec :family (my/first-available-font ".New York" "New York" "Georgia" "Times New Roman" "serif") :size 16)
+       doom-variable-pitch-font (font-spec :family (my/first-available-font ".New York" "New York" "Georgia" "Times New Roman" "serif") :size 17)
        ;; Big font for recording
        doom-big-font (font-spec :family "FiraCode Nerd Font" :size 24)
        display-line-numbers-type t

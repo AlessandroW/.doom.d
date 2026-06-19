@@ -165,48 +165,78 @@ characters per visual line with New York.")
          org-fontify-quote-and-verse-blocks t
          org-fontify-whole-block-delimiter-line nil
          org-startup-with-inline-images t
+         org-auto-align-tags nil
+         org-tags-column 0
+         org-catch-invisible-edits 'show-and-error
+         org-special-ctrl-a/e t
+         org-insert-heading-respect-content t
+         org-ellipsis "…"
          ;; Headings should read like document headings, not outline bullets.
          org-superstar-headline-bullets-list '(" "))
 
-  (let ((block-bg (my/reading--subtle-background)))
-    (custom-set-faces!
-      ;; Document typography.
-      `(org-document-title :inherit variable-pitch :family ,my/reading-heading-font :height 1.70 :weight bold :foreground ,(face-foreground 'default))
-      `(org-level-1 :inherit variable-pitch :family ,my/reading-heading-font :height 1.50 :weight bold :foreground ,(face-foreground 'default))
-      `(org-level-2 :inherit variable-pitch :family ,my/reading-heading-font :height 1.35 :weight bold :foreground ,(face-foreground 'default))
-      `(org-level-3 :inherit variable-pitch :family ,my/reading-heading-font :height 1.22 :weight bold :foreground ,(face-foreground 'default))
-      `(org-level-4 :inherit variable-pitch :family ,my/reading-heading-font :height 1.12 :weight semi-bold :foreground ,(face-foreground 'default))
-      `(org-level-5 :inherit variable-pitch :family ,my/reading-heading-font :height 1.05 :weight semi-bold :foreground ,(face-foreground 'default))
-      `(org-level-6 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight semi-bold :foreground ,(face-foreground 'default))
-      `(org-level-7 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight normal :foreground ,(face-foreground 'default))
-      `(org-level-8 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight normal :foreground ,(face-foreground 'default))
-      `(org-link :inherit link :weight normal :underline ,(face-foreground 'link nil t))
+  (defun my/pretty-reading-apply-faces (&rest _)
+    "Apply theme-aware faces for pretty Org/Markdown reading."
+    (let* ((default-bg (or (face-background 'default nil t) "#ffffff"))
+           (block-bg (my/reading--subtle-background))
+           (metadata-fg (my/reading--adjust-color default-bg 24 20))
+           (default-fg (face-foreground 'default nil t)))
+      (custom-set-faces!
+        ;; Document typography.
+        `(org-document-title :inherit variable-pitch :family ,my/reading-heading-font :height 1.90 :weight bold :foreground ,default-fg)
+        `(org-level-1 :inherit variable-pitch :family ,my/reading-heading-font :height 1.52 :weight bold :foreground ,default-fg)
+        `(org-level-2 :inherit variable-pitch :family ,my/reading-heading-font :height 1.36 :weight bold :foreground ,default-fg)
+        `(org-level-3 :inherit variable-pitch :family ,my/reading-heading-font :height 1.23 :weight bold :foreground ,default-fg)
+        `(org-level-4 :inherit variable-pitch :family ,my/reading-heading-font :height 1.13 :weight semi-bold :foreground ,default-fg)
+        `(org-level-5 :inherit variable-pitch :family ,my/reading-heading-font :height 1.06 :weight semi-bold :foreground ,default-fg)
+        `(org-level-6 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight semi-bold :foreground ,default-fg)
+        `(org-level-7 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight normal :foreground ,default-fg)
+        `(org-level-8 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight normal :foreground ,default-fg)
+        `(org-link :inherit link :weight normal :underline ,(face-foreground 'link nil t))
 
-      ;; Keep source/structure editable, but quiet.
-      `(org-block :inherit fixed-pitch :background ,block-bg :extend nil)
-      `(org-quote :inherit variable-pitch :slant italic :background ,block-bg :extend nil)
-      `(org-verse :inherit variable-pitch :background ,block-bg :extend nil)
-      `(org-block-begin-line :inherit (fixed-pitch shadow) :height 0.85 :background unspecified :extend nil)
-      `(org-block-end-line :inherit (fixed-pitch shadow) :height 0.85 :background unspecified :extend nil)
-      '(org-code :inherit (fixed-pitch org-code))
-      '(org-verbatim :inherit (fixed-pitch org-verbatim))
-      '(org-table :inherit fixed-pitch)
-      '(org-formula :inherit fixed-pitch)
-      '(org-checkbox :height 1.15 :weight normal)
-      '(org-meta-line :inherit my/reading-metadata-face)
-      '(org-document-info-keyword :inherit my/reading-metadata-face)
-      '(org-special-keyword :inherit my/reading-metadata-face)
-      '(org-property-value :inherit my/reading-metadata-face)
-      '(org-drawer :inherit my/reading-metadata-face)
-      '(org-tag :inherit shadow :height 0.85)
-      '(org-date :inherit shadow)
-      '(org-indent :inherit org-hide)))
+        ;; Keep source/structure editable, but quiet. Recompute on theme changes.
+        `(my/reading-metadata-face :inherit fixed-pitch :foreground ,metadata-fg :height 0.72)
+        `(org-block :inherit fixed-pitch :background ,block-bg :extend nil)
+        `(org-quote :inherit variable-pitch :slant italic :background ,block-bg :extend nil)
+        `(org-verse :inherit variable-pitch :background ,block-bg :extend nil)
+        `(org-block-begin-line :inherit my/reading-metadata-face :background ,block-bg :extend nil)
+        `(org-block-end-line :inherit my/reading-metadata-face :background ,block-bg :extend nil)
+        '(org-code :inherit (fixed-pitch org-code))
+        '(org-verbatim :inherit (fixed-pitch org-verbatim))
+        '(org-table :inherit fixed-pitch)
+        '(org-formula :inherit fixed-pitch)
+        '(org-checkbox :height 1.35 :weight normal)
+        '(org-meta-line :inherit my/reading-metadata-face)
+        '(org-document-info-keyword :inherit my/reading-metadata-face)
+        '(org-special-keyword :inherit my/reading-metadata-face)
+        '(org-property-value :inherit my/reading-metadata-face)
+        '(org-drawer :inherit my/reading-metadata-face)
+        '(org-tag :inherit my/reading-metadata-face)
+        '(org-date :inherit my/reading-metadata-face)
+        '(org-indent :inherit org-hide)
+
+        `(markdown-header-face-1 :inherit variable-pitch :family ,my/reading-heading-font :height 1.55 :weight bold :foreground ,default-fg)
+        `(markdown-header-face-2 :inherit variable-pitch :family ,my/reading-heading-font :height 1.38 :weight bold :foreground ,default-fg)
+        `(markdown-header-face-3 :inherit variable-pitch :family ,my/reading-heading-font :height 1.24 :weight bold :foreground ,default-fg)
+        `(markdown-header-face-4 :inherit variable-pitch :family ,my/reading-heading-font :height 1.14 :weight semi-bold :foreground ,default-fg)
+        `(markdown-header-face-5 :inherit variable-pitch :family ,my/reading-heading-font :height 1.06 :weight semi-bold :foreground ,default-fg)
+        `(markdown-header-face-6 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight normal :foreground ,default-fg)
+        `(markdown-code-face :inherit fixed-pitch :background ,block-bg)
+        `(markdown-pre-face :inherit fixed-pitch :background ,block-bg :extend t)
+        '(markdown-inline-code-face :inherit fixed-pitch)
+        '(markdown-table-face :inherit fixed-pitch)
+        '(markdown-markup-face :inherit shadow :height 0.9)
+        '(markdown-url-face :inherit shadow)
+        '(markdown-blockquote-face :inherit shadow :slant normal)
+        '(markdown-link-face :inherit link :weight normal))))
+
+  (my/pretty-reading-apply-faces)
+  (advice-add #'load-theme :after #'my/pretty-reading-apply-faces)
 
   (defun my/org-pretty-reading-font-lock ()
     "Add extra font-lock polish for pretty Org reading."
     (font-lock-add-keywords
      nil
-     '(("^#\\+\\(?:CREATED\\|LAST_MODIFIED\\|FILETAGS\\|filetags\\|SETUPFILE\\|setupfile\\):.*$"
+     '(("^\\(?:#\\+\\)?\\(?:CREATED\\|LAST_MODIFIED\\|FILETAGS\\|filetags\\|SETUPFILE\\|setupfile\\):.*$"
         0 'my/reading-metadata-face prepend)
        ("^\\([ \\t]*[-+*][ \\t]+\\)\\(\\[[ X-]\\]\\)"
         (1 '(face org-hide display "") prepend)))
@@ -276,23 +306,6 @@ characters per visual line with New York.")
          markdown-blockquote-display-char "▌"
          markdown-make-gfm-checkboxes-buttons t
          markdown-gfm-uppercase-checkbox t)
-
-  (let ((block-bg (my/reading--subtle-background)))
-    (custom-set-faces!
-      `(markdown-header-face-1 :inherit variable-pitch :family ,my/reading-heading-font :height 1.55 :weight bold :foreground ,(face-foreground 'default))
-      `(markdown-header-face-2 :inherit variable-pitch :family ,my/reading-heading-font :height 1.38 :weight bold :foreground ,(face-foreground 'default))
-      `(markdown-header-face-3 :inherit variable-pitch :family ,my/reading-heading-font :height 1.24 :weight bold :foreground ,(face-foreground 'default))
-      `(markdown-header-face-4 :inherit variable-pitch :family ,my/reading-heading-font :height 1.14 :weight semi-bold :foreground ,(face-foreground 'default))
-      `(markdown-header-face-5 :inherit variable-pitch :family ,my/reading-heading-font :height 1.06 :weight semi-bold :foreground ,(face-foreground 'default))
-      `(markdown-header-face-6 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight normal :foreground ,(face-foreground 'default))
-      `(markdown-code-face :inherit fixed-pitch :background ,block-bg)
-      `(markdown-pre-face :inherit fixed-pitch :background ,block-bg :extend t)
-      '(markdown-inline-code-face :inherit fixed-pitch)
-      '(markdown-table-face :inherit fixed-pitch)
-      '(markdown-markup-face :inherit shadow :height 0.9)
-      '(markdown-url-face :inherit shadow)
-      '(markdown-blockquote-face :inherit shadow :slant normal)
-      '(markdown-link-face :inherit link :weight normal)))
 
   (add-hook 'markdown-mode-hook #'my/pretty-reading-setup)
   (add-hook 'gfm-mode-hook #'my/pretty-reading-setup)

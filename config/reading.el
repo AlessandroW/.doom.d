@@ -4,11 +4,34 @@
 ;; Goal: document-like prose, while keeping source blocks, tables and metadata
 ;; editing-safe and fixed-pitch.
 
-(defvar my/reading-default-width 90
-  "Default centered body width for pretty reading buffers.")
+(defvar my/reading-default-width 52
+  "Maximum default centered body width for pretty reading buffers.
 
-(defvar my/reading-wide-width 120
-  "Wide centered body width for code/table-heavy reading buffers.")
+This is intentionally lower than an 80-90 character prose target because
+Olivetti measures in fixed-pitch frame columns, while our prose uses a narrower
+proportional font. A width around 52 columns yields roughly 75-85 prose
+characters per visual line with New York.")
+
+(defvar my/reading-default-window-fraction 0.56
+  "Default fraction of the window used for pretty reading buffers.")
+
+(defvar my/reading-wide-width 90
+  "Maximum wide centered body width for code/table-heavy reading buffers.")
+
+(defvar my/reading-wide-window-fraction 0.84
+  "Wide fraction of the window used for code/table-heavy reading buffers.")
+
+(defvar-local my/reading-wide-p nil
+  "Whether this buffer should use the wide pretty reading width.")
+
+(defun my/reading--target-width ()
+  "Return an adaptive Olivetti width for the current window."
+  (let* ((max-width (if my/reading-wide-p my/reading-wide-width my/reading-default-width))
+         (fraction (if my/reading-wide-p my/reading-wide-window-fraction my/reading-default-window-fraction))
+         (window-width (max 1 (window-total-width)))
+         (fractional-width (floor (* window-width fraction))))
+    (max (if (boundp 'olivetti-minimum-body-width) olivetti-minimum-body-width 50)
+         (min max-width fractional-width))))
 
 (defun my/reading--first-available-font (&rest fonts)
   "Return the first available font family from FONTS."
@@ -40,13 +63,27 @@
       (when (and (my/pretty-reading-buffer-p)
                  (bound-and-true-p olivetti-mode)
                  (fboundp 'olivetti-set-width))
+        (setq-local olivetti-body-width (my/reading--target-width))
         (olivetti-set-width olivetti-body-width)))))
+
+(defun my/pretty-reading-refresh-frame-h (&optional frame)
+  "Refresh adaptive reading widths in all visible windows on FRAME."
+  (dolist (window (window-list frame 'no-minibuf))
+    (with-current-buffer (window-buffer window)
+      (when (and (my/pretty-reading-buffer-p)
+                 (bound-and-true-p olivetti-mode))
+        (with-selected-window window
+          (my/pretty-reading--refresh-layout))))))
+
+(add-hook 'window-size-change-functions #'my/pretty-reading-refresh-frame-h)
+(add-hook 'window-configuration-change-hook #'my/pretty-reading-refresh-frame-h)
 
 (defun my/pretty-reading-setup ()
   "Enable the shared pretty reading stack in the current buffer."
   (setq-local display-line-numbers nil
               line-spacing 0.12
-              x-underline-at-descent-line t)
+              x-underline-at-descent-line t
+              olivetti-body-width (my/reading--target-width))
   (when (fboundp 'visual-line-mode)
     (visual-line-mode 1))
   (when (fboundp 'mixed-pitch-mode)
@@ -65,10 +102,8 @@
   (interactive)
   (unless (bound-and-true-p olivetti-mode)
     (olivetti-mode 1))
-  (setq-local olivetti-body-width
-              (if (equal olivetti-body-width my/reading-default-width)
-                  my/reading-wide-width
-                my/reading-default-width))
+  (setq-local my/reading-wide-p (not my/reading-wide-p)
+              olivetti-body-width (my/reading--target-width))
   (when (fboundp 'olivetti-set-width)
     (olivetti-set-width olivetti-body-width))
   (message "Reading width: %s" olivetti-body-width))
@@ -76,7 +111,8 @@
 (use-package! olivetti
   :defer t
   :config
-  (setq! olivetti-min-body-width 60
+  (setq! olivetti-minimum-body-width 40
+         olivetti-min-body-width 40
          olivetti-body-width my/reading-default-width
          olivetti-style t
          olivetti-margin-width 12))

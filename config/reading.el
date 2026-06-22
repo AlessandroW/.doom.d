@@ -90,6 +90,16 @@ characters per visual line with New York.")
                (cl-mapcar (lambda (f b) (+ (* alpha f) (* (- 1 alpha) b))) fg bg))
       foreground)))
 
+(defun my/markdown-reading-match-table-separator (limit)
+  "Match the next visible separator character in a Markdown table before LIMIT."
+  (catch 'match
+    (while (re-search-forward "[|+]" limit t)
+      (when (save-excursion
+              (beginning-of-line)
+              (looking-at-p "[ \\t]*|"))
+        (throw 'match t)))
+    nil))
+
 (defun my/pretty-reading-buffer-p ()
   "Return non-nil when the current buffer should use pretty reading polish."
   (derived-mode-p 'org-mode 'markdown-mode 'gfm-mode
@@ -262,14 +272,20 @@ characters per visual line with New York.")
         `(markdown-header-face-4 :inherit variable-pitch :family ,my/reading-heading-font :height 1.14 :weight semi-bold :foreground ,default-fg)
         `(markdown-header-face-5 :inherit variable-pitch :family ,my/reading-heading-font :height 1.06 :weight semi-bold :foreground ,default-fg)
         `(markdown-header-face-6 :inherit variable-pitch :family ,my/reading-heading-font :height 1.0 :weight normal :foreground ,default-fg)
-        `(markdown-code-face :inherit fixed-pitch :background ,block-bg)
-        `(markdown-pre-face :inherit fixed-pitch :background ,block-bg :extend t)
-        '(markdown-inline-code-face :inherit fixed-pitch)
-        '(markdown-table-face :inherit fixed-pitch)
-        '(markdown-markup-face :inherit shadow :height 0.9)
+        ;; Set explicit foregrounds so Markdown faces don't keep stale light/dark
+        ;; theme colors after switching themes in-place.
+        `(markdown-code-face :inherit fixed-pitch :foreground ,default-fg :background ,block-bg)
+        `(markdown-pre-face :inherit fixed-pitch :foreground ,default-fg :background ,block-bg :extend t)
+        `(markdown-inline-code-face :inherit fixed-pitch :foreground ,default-fg)
+        `(markdown-table-face :inherit fixed-pitch :foreground ,default-fg)
+        `(markdown-markup-face :inherit shadow :foreground ,metadata-fg :height 0.9)
         '(markdown-url-face :inherit shadow)
         '(markdown-blockquote-face :inherit shadow :slant normal)
-        '(markdown-link-face :inherit link :weight normal))))
+        '(markdown-link-face :inherit link :weight normal))
+      (dolist (buffer (buffer-list))
+        (with-current-buffer buffer
+          (when (my/pretty-reading-buffer-p)
+            (font-lock-flush))))))
 
   (my/pretty-reading-apply-faces)
   (advice-add #'load-theme :after #'my/pretty-reading-apply-faces)
@@ -489,10 +505,22 @@ characters per visual line with New York.")
          markdown-make-gfm-checkboxes-buttons t
          markdown-gfm-uppercase-checkbox t)
 
+  (defun my/markdown-pretty-reading-font-lock ()
+    "Add extra font-lock polish for pretty Markdown reading."
+    (font-lock-add-keywords
+     nil
+     '((my/markdown-reading-match-table-separator
+        0 'my/reading-table-rule-face prepend))
+     'append))
+
   (add-hook 'markdown-mode-hook #'my/pretty-reading-setup)
   (add-hook 'gfm-mode-hook #'my/pretty-reading-setup)
   (add-hook 'markdown-view-mode-hook #'my/pretty-reading-setup)
-  (add-hook 'gfm-view-mode-hook #'my/pretty-reading-setup))
+  (add-hook 'gfm-view-mode-hook #'my/pretty-reading-setup)
+  (add-hook 'markdown-mode-hook #'my/markdown-pretty-reading-font-lock)
+  (add-hook 'gfm-mode-hook #'my/markdown-pretty-reading-font-lock)
+  (add-hook 'markdown-view-mode-hook #'my/markdown-pretty-reading-font-lock)
+  (add-hook 'gfm-view-mode-hook #'my/markdown-pretty-reading-font-lock))
 
 (add-hook 'after-change-major-mode-hook
           (defun my/pretty-reading-after-major-mode-h ()

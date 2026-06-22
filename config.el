@@ -20,7 +20,7 @@
 ;; UI and Window Management
 ;(desktop-save-mode 1)
 
-(setq! doom-theme 'doom-nano-light
+(setq! doom-theme 'doom-one
        doom-font (font-spec :family "FiraCode Nerd Font" :size 14)
        doom-variable-pitch-font (font-spec :family (my/first-available-font ".New York" "New York" "Georgia" "Times New Roman" "serif") :size 17)
        ;; Big font for recording

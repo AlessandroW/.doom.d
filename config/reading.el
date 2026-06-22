@@ -226,8 +226,10 @@ characters per visual line with New York.")
 
         ;; Keep source/structure editable, but quiet. Recompute on theme changes.
         `(my/reading-metadata-face :inherit fixed-pitch :foreground ,metadata-fg :height 0.78)
-        `(my/reading-block-guide-face :foreground ,guide-fg :weight normal)
-        `(my/reading-callout-guide-face :foreground ,callout-fg :weight semi-bold)
+        ;; Slightly taller than surrounding text so per-line guide glyphs touch
+        ;; despite the extra prose line spacing.
+        `(my/reading-block-guide-face :foreground ,guide-fg :weight normal :height 1.18)
+        `(my/reading-callout-guide-face :foreground ,callout-fg :weight semi-bold :height 1.18)
         ;; Let org-modern own block names; custom overlays draw close guides.
         `(org-block :inherit fixed-pitch :background unspecified :extend nil)
         `(org-quote :inherit variable-pitch :slant italic :background unspecified :extend nil)
@@ -364,10 +366,13 @@ characters per visual line with New York.")
                     (while (< (point) end)
                       (let* ((line-beg (line-beginning-position))
                              (next-line (save-excursion (forward-line 1) (point)))
-                             ;; Use a full-height one-eighth block instead of
-                             ;; box-drawing glyphs. It reads like Obsidian's
-                             ;; thin connected guide and avoids line-height gaps.
-                             (guide "▏ "))
+                             ;; Rounded block bracket. The guide face is made a
+                             ;; bit taller so these light box glyphs connect
+                             ;; across our increased prose line spacing.
+                             (guide (cond ((and (= line-beg first-line) (>= next-line end)) "├ ")
+                                          ((= line-beg first-line) "╭ ")
+                                          ((>= next-line end) "╰ ")
+                                          (t "│ "))))
                         ;; `before-string' on zero-width overlays is easy for
                         ;; other display properties to obscure. A per-line
                         ;; `line-prefix' survives org-modern, visual-line-mode

@@ -57,6 +57,10 @@ characters per visual line with New York.")
   '((t :inherit my/reading-block-guide-face))
   "Face for close inline Org callout block guides.")
 
+(defface my/reading-table-rule-face
+  '((t :inherit shadow))
+  "Face for subdued Org table separators.")
+
 (defun my/reading--dark-color-p (color)
   "Return non-nil when COLOR is visually dark."
   (require 'color)
@@ -231,6 +235,7 @@ characters per visual line with New York.")
         ;; `╭' and `╰'. Keep a small height bump to bridge prose line spacing.
         `(my/reading-block-guide-face :inherit fixed-pitch :foreground ,guide-fg :weight normal :height 1.08)
         `(my/reading-callout-guide-face :inherit fixed-pitch :foreground ,callout-fg :weight normal :height 1.08)
+        `(my/reading-table-rule-face :inherit fixed-pitch :foreground ,metadata-fg :weight normal)
         ;; Let org-modern own block names; custom overlays draw close guides.
         `(org-block :inherit fixed-pitch :background unspecified :extend nil)
         `(org-quote :inherit variable-pitch :slant italic :background unspecified :extend nil)
@@ -239,7 +244,7 @@ characters per visual line with New York.")
         `(org-block-end-line :inherit my/reading-metadata-face :background unspecified :extend nil)
         '(org-code :inherit (fixed-pitch org-code))
         '(org-verbatim :inherit (fixed-pitch org-verbatim))
-        '(org-table :inherit fixed-pitch)
+        `(org-table :inherit fixed-pitch :foreground ,default-fg)
         '(org-formula :inherit fixed-pitch)
         '(org-checkbox :height 1.35 :weight normal)
         '(org-meta-line :inherit my/reading-metadata-face)
@@ -269,6 +274,16 @@ characters per visual line with New York.")
   (my/pretty-reading-apply-faces)
   (advice-add #'load-theme :after #'my/pretty-reading-apply-faces)
 
+  (defun my/org-reading-match-table-separator (limit)
+    "Match the next visible separator character in an Org table before LIMIT."
+    (catch 'match
+      (while (re-search-forward "[|+]" limit t)
+        (when (save-excursion
+                (beginning-of-line)
+                (looking-at-p "[ \\t]*|"))
+          (throw 'match t)))
+      nil))
+
   (defun my/org-pretty-reading-font-lock ()
     "Add extra font-lock polish for pretty Org reading."
     (font-lock-add-keywords
@@ -277,6 +292,8 @@ characters per visual line with New York.")
         0 'my/reading-metadata-face prepend)
        ("^[ \\t]*:\\(?:PROPERTIES\\|END\\|[[:alnum:]_@#%]+\\):.*$"
         0 'my/reading-metadata-face prepend)
+       (my/org-reading-match-table-separator
+        0 'my/reading-table-rule-face prepend)
        ("^\\([ \\t]*[-+*][ \\t]+\\)\\(\\[[ X-]\\]\\)"
         (1 '(face org-hide display "") prepend)))
      'append))

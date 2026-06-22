@@ -20,7 +20,7 @@
 ;; UI and Window Management
 ;(desktop-save-mode 1)
 
-(setq! doom-theme 'doom-one
+(setopt doom-theme 'doom-one
        doom-font (font-spec :family "FiraCode Nerd Font" :size 14)
        doom-variable-pitch-font (font-spec :family (my/first-available-font ".New York" "New York" "Georgia" "Times New Roman" "serif") :size 17)
        ;; Big font for recording
@@ -68,7 +68,7 @@
  (set-fontset-font t 'emoji (font-spec :family "Apple Color Emoji") nil 'prepend)
  (remove-hook 'window-setup-hook #'use-apple-emoji-font))
 
-(setq! ;; Use snipe for horizontal and vertical movement.
+(setopt ;; Use snipe for horizontal and vertical movement.
       evil-snipe-scope 'whole-visible)
 
 (after! persp-mode
@@ -123,9 +123,9 @@ throws an error."
 BUG: External keyboard meta is right by default."
   (interactive)
   (if (equal mac-option-modifier 'none)
-      (setq! mac-option-modifier 'meta
+      (setopt mac-option-modifier 'meta
             mac-right-option-modifier 'none)
-    (setq! mac-option-modifier 'none
+    (setopt mac-option-modifier 'none
           mac-right-option-modifier 'meta)))
 
 (after! elaiza
@@ -133,7 +133,7 @@ BUG: External keyboard meta is right by default."
                                      :name "QWQ" :model "qwq"))
   (elaiza-backends--add-integration (make-elaiza-ollama
                                      :name "Qwen 2.5 coder" :model "qwen2.5-coder:32b"))
-  (setq! elaiza-default-model (make-elaiza-claude-sonnet-3-7)
+  (setopt elaiza-default-model (make-elaiza-claude-sonnet-3-7)
          elaiza-debug t))
 
 ;; YOUTUBE
@@ -148,14 +148,14 @@ BUG: External keyboard meta is right by default."
             map)
   (if youtube-mode
       (progn
-        (setq! org-directory my/public-org-directory
+        (setopt org-directory my/public-org-directory
                org-roam-directory org-directory
                my/previous-frame-width (frame-width)
                my/previous-frame-height (frame-height))
         (set-frame-size (selected-frame) 1953 1080 t) ;; +33 px for the macOS bar
         (keycast-header-line-mode 1))
     (progn
-      (setq! org-directory my/org-directory
+      (setopt org-directory my/org-directory
              org-roam-directory my/org-roam-directory)
       (set-frame-size (selected-frame)
                       my/previous-frame-width

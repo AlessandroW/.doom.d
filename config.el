@@ -5,6 +5,14 @@
       user-mail-address "contact@wollek.ai"
       org-directory my/org-directory)
 
+;; GUI Emacs on macOS often starts without the shell PATH, so Homebrew tools
+;; like pandoc are invisible to `executable-find'. Keep this early because
+;; reading.el configures Markdown preview commands.
+(when (and (eq system-type 'darwin)
+           (file-directory-p "/opt/homebrew/bin"))
+  (add-to-list 'exec-path "/opt/homebrew/bin")
+  (setenv "PATH" (concat "/opt/homebrew/bin:" (getenv "PATH"))))
+
 (load! "config/org.el")
 (load! "config/org-roam.el")
 (load! "config/reading.el")

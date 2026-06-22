@@ -540,7 +540,12 @@ characters per visual line with New York.")
   :commands markdown-xwidget-preview-mode
   :config
   (setq markdown-xwidget-command
-        "pandoc -f gfm+tex_math_dollars+tex_math_single_backslash -t html --mathjax"
+        ;; Pandoc's gfm reader supports tex_math_dollars, but not
+        ;; tex_math_single_backslash. Use the executable resolved from Emacs'
+        ;; PATH (patched for Homebrew in config.el).
+        (format "%s -f gfm+tex_math_dollars -t html --mathjax"
+                (shell-quote-argument (or (executable-find "pandoc") "pandoc")))
+        markdown-command markdown-xwidget-command
         markdown-xwidget-github-theme "light"
         markdown-xwidget-code-block-theme "github"
         markdown-xwidget-mermaid-theme "default")

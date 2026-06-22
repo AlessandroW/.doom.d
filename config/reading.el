@@ -288,14 +288,14 @@ characters per visual line with New York.")
             (font-lock-flush))))))
 
   (defun my/pretty-reading-apply-faces-after-theme (&rest _)
-    "Re-apply pretty reading faces after theme switching has settled."
-    ;; Doom/theme packages may continue mutating faces immediately after
-    ;; `load-theme' returns. Defer our theme-derived colors so they are computed
-    ;; from the final default face, not stale light/dark values.
-    (run-at-time 0.05 nil #'my/pretty-reading-apply-faces))
+    "Re-apply pretty reading faces after Doom loads a theme."
+    (my/pretty-reading-apply-faces))
 
   (my/pretty-reading-apply-faces)
-  (advice-add #'load-theme :after #'my/pretty-reading-apply-faces-after-theme)
+  ;; Doom's theme hook is the intended post-theme extension point. Avoid
+  ;; advising `load-theme'/`enable-theme' directly; Doom already centralizes
+  ;; theme switching and reload behavior here.
+  (add-hook 'doom-load-theme-hook #'my/pretty-reading-apply-faces-after-theme)
 
   (defun my/org-reading-match-table-separator (limit)
     "Match the next visible separator character in an Org table before LIMIT."

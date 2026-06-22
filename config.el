@@ -20,6 +20,12 @@
 ;; UI and Window Management
 ;(desktop-save-mode 1)
 
+(defvar my/zen-light-theme 'doom-nano-light
+  "Light theme to use while `writeroom-mode' / Doom zen mode is active.")
+
+(defvar my/zen--previous-themes nil
+  "Themes that were active before entering zen mode.")
+
 (setopt doom-theme 'doom-one
        doom-font (font-spec :family "FiraCode Nerd Font" :size 14)
        doom-variable-pitch-font (font-spec :family (my/first-available-font ".New York" "New York" "Georgia" "Times New Roman" "serif") :size 17)
@@ -30,6 +36,30 @@
        evil-vsplit-window-right t
        ;; no buffer<2> anymore
        uniquify-buffer-name-style 'forward)
+
+(after! writeroom-mode
+  ;; Doom's :ui zen scales text with `+zen-text-scale'. Keep zen mode focused on
+  ;; layout/theme only; our reading stack already controls prose font size.
+  (setq +zen-text-scale 0)
+
+  (defun my/zen--load-themes (themes)
+    "Disable current themes and load THEMES in order."
+    (mapc #'disable-theme custom-enabled-themes)
+    (dolist (theme themes)
+      (load-theme theme t))
+    (when themes
+      (setq doom-theme (car (last themes)))))
+
+  (add-hook 'writeroom-mode-hook
+            (defun my/zen-light-theme-h ()
+              "Use `my/zen-light-theme' while zen mode is active, then restore."
+              (if writeroom-mode
+                  (progn
+                    (setq my/zen--previous-themes custom-enabled-themes)
+                    (my/zen--load-themes (list my/zen-light-theme)))
+                (when my/zen--previous-themes
+                  (my/zen--load-themes (reverse my/zen--previous-themes))
+                  (setq my/zen--previous-themes nil))))))
 
 (after! idle-highlight-mode ;; From https://github.com/TheJJ/conffiles/blob/6f15b4881ef3422980b9d146f708269de8fd8fa9/.doom.d/visual.el#L3
  (setq idle-highlight-idle-time 0.2

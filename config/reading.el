@@ -157,11 +157,11 @@ characters per visual line with New York.")
 (use-package! olivetti
   :defer t
   :config
-  (setq! olivetti-minimum-body-width 40
-         olivetti-min-body-width 40
-         olivetti-body-width my/reading-default-width
-         olivetti-style t
-         olivetti-margin-width 12))
+  (setopt olivetti-minimum-body-width 40
+          olivetti-min-body-width 40
+          olivetti-body-width my/reading-default-width
+          olivetti-style t
+          olivetti-margin-width 12))
 
 (use-package! valign
   :defer t)
@@ -183,22 +183,22 @@ characters per visual line with New York.")
     (add-to-list 'mixed-pitch-fixed-pitch-faces face)))
 
 (after! org
-  (setq! org-hide-emphasis-markers t
-         org-hidden-keywords '(title)
-         org-pretty-entities t
-         org-hide-leading-stars nil
-         org-startup-indented nil
-         org-fontify-quote-and-verse-blocks t
-         org-fontify-whole-block-delimiter-line nil
-         org-startup-with-inline-images t
-         org-auto-align-tags nil
-         org-tags-column 0
-         org-catch-invisible-edits 'show-and-error
-         org-special-ctrl-a/e t
-         org-insert-heading-respect-content t
-         org-ellipsis "…"
-         ;; Headings should read like document headings, not outline bullets.
-         org-superstar-headline-bullets-list '(" "))
+  (setopt org-hide-emphasis-markers t
+          org-hidden-keywords '(title)
+          org-pretty-entities t
+          org-hide-leading-stars nil
+          org-startup-indented nil
+          org-fontify-quote-and-verse-blocks t
+          org-fontify-whole-block-delimiter-line nil
+          org-startup-with-inline-images t
+          org-auto-align-tags nil
+          org-tags-column 0
+          org-catch-invisible-edits 'show-and-error
+          org-special-ctrl-a/e t
+          org-insert-heading-respect-content t
+          org-ellipsis "…"
+          ;; Headings should read like document headings, not outline bullets.
+          org-superstar-headline-bullets-list '(" "))
 
   (defun my/pretty-reading-apply-faces (&rest _)
     "Apply theme-aware faces for pretty Org/Markdown reading."
@@ -377,8 +377,8 @@ characters per visual line with New York.")
                               (skip-chars-backward " \t\n" beg)
                               (line-end-position)))
                        (face (if (my/org-reading--callout-block-p element)
-                                'my/reading-callout-guide-face
-                              'my/reading-block-guide-face)))
+                                 'my/reading-callout-guide-face
+                               'my/reading-block-guide-face)))
                   (goto-char beg)
                   (let ((first-line (line-beginning-position)))
                     (while (< (point) end)

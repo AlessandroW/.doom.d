@@ -315,6 +315,10 @@ characters per visual line with New York.")
         0 'my/reading-metadata-face prepend)
        ("^[ \\t]*:\\(?:PROPERTIES\\|END\\|[[:alnum:]_@#%]+\\):.*$"
         0 'my/reading-metadata-face prepend)
+       ("^# \\(?:Local Variables\\|End\\):.*$"
+        0 'my/reading-metadata-face prepend)
+       ("^# [[:alnum:]_-]+:.*$"
+        0 'my/reading-metadata-face prepend)
        (my/org-reading-match-table-separator
         0 'my/reading-table-rule-face prepend)
        ("^\\([ \\t]*[-+*][ \\t]+\\)\\(\\[[ X-]\\]\\)"

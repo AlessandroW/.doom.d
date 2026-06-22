@@ -226,10 +226,11 @@ characters per visual line with New York.")
 
         ;; Keep source/structure editable, but quiet. Recompute on theme changes.
         `(my/reading-metadata-face :inherit fixed-pitch :foreground ,metadata-fg :height 0.78)
-        ;; Slightly taller than surrounding text so per-line guide glyphs touch
-        ;; despite the extra prose line spacing.
-        `(my/reading-block-guide-face :foreground ,guide-fg :weight normal :height 1.18)
-        `(my/reading-callout-guide-face :foreground ,callout-fg :weight semi-bold :height 1.18)
+        ;; Force box-drawing guides through the fixed-pitch font. In mixed-pitch
+        ;; buffers, proportional/fallback fonts can render `│' much heavier than
+        ;; `╭' and `╰'. Keep a small height bump to bridge prose line spacing.
+        `(my/reading-block-guide-face :inherit fixed-pitch :foreground ,guide-fg :weight normal :height 1.08)
+        `(my/reading-callout-guide-face :inherit fixed-pitch :foreground ,callout-fg :weight normal :height 1.08)
         ;; Let org-modern own block names; custom overlays draw close guides.
         `(org-block :inherit fixed-pitch :background unspecified :extend nil)
         `(org-quote :inherit variable-pitch :slant italic :background unspecified :extend nil)

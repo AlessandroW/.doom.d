@@ -311,7 +311,9 @@ characters per visual line with New York.")
     "Add extra font-lock polish for pretty Org reading."
     (font-lock-add-keywords
      nil
-     '(("^\\(?:#\\+\\)?\\(?:CREATED\\|LAST_MODIFIED\\|FILETAGS\\|filetags\\|SETUPFILE\\|setupfile\\):.*$"
+     '(("^#\\+[[:alnum:]_-]+:.*$"
+        0 'my/reading-metadata-face prepend)
+       ("^\\(?:CREATED\\|LAST_MODIFIED\\|FILETAGS\\|filetags\\):.*$"
         0 'my/reading-metadata-face prepend)
        ("^[ \\t]*:\\(?:PROPERTIES\\|END\\|[[:alnum:]_@#%]+\\):.*$"
         0 'my/reading-metadata-face prepend)

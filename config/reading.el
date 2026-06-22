@@ -307,11 +307,19 @@ characters per visual line with New York.")
           (throw 'match t)))
       nil))
 
+  (defun my/org-reading-match-keyword-metadata (limit)
+    "Match Org keyword metadata before LIMIT, but leave #+TITLE alone."
+    (catch 'match
+      (while (re-search-forward "^#\\+\\([[:alnum:]_-]+\\):.*$" limit t)
+        (unless (string-equal (downcase (match-string 1)) "title")
+          (throw 'match t)))
+      nil))
+
   (defun my/org-pretty-reading-font-lock ()
     "Add extra font-lock polish for pretty Org reading."
     (font-lock-add-keywords
      nil
-     '(("^#\\+[[:alnum:]_-]+:.*$"
+     '((my/org-reading-match-keyword-metadata
         0 'my/reading-metadata-face prepend)
        ("^\\(?:CREATED\\|LAST_MODIFIED\\|FILETAGS\\|filetags\\):.*$"
         0 'my/reading-metadata-face prepend)
